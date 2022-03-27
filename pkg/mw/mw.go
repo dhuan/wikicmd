@@ -11,6 +11,8 @@ import (
 
 type Config struct {
 	BaseAddress string
+	Login       string
+	Password    string
 }
 
 type LoginTokenSet struct {
@@ -92,8 +94,8 @@ func Login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
 		url.Values{
 			"format":     {"json"},
 			"action":     {"login"},
-			"lgname":     {"Admin@foobar"},
-			"lgpassword": {"c2jpjh9k9u3ak8abomlcjrs8g3k9vcdp"},
+			"lgname":     {config.Login},
+			"lgpassword": {config.Password},
 			"lgtoken":    {loginTokenSet.Token},
 		},
 		&loginResponse{},
