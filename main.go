@@ -3,13 +3,21 @@ package main
 import (
 	"fmt"
 
+	"github.com/dhuan/wikicmd/internal/config"
 	"github.com/dhuan/wikicmd/pkg/editor"
 	"github.com/dhuan/wikicmd/pkg/mw"
 )
 
 func main() {
+	config, err := config.Get()
+	if err != nil {
+		panic(err)
+	}
+
 	wikiConfig := mw.Config{
-		BaseAddress: "http://wiki.local:8080",
+		BaseAddress: config.Address,
+		Login:       config.User,
+		Password:    config.Password,
 	}
 
 	loginTokenSet, err := mw.GetLoginToken(&wikiConfig)
