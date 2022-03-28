@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dhuan/wikicmd/internal/config"
+	"github.com/dhuan/wikicmd/internal/utils"
 	"github.com/dhuan/wikicmd/pkg/editor"
 	"github.com/dhuan/wikicmd/pkg/mw"
 	"github.com/spf13/cobra"
@@ -45,7 +46,7 @@ var editCmd = &cobra.Command{
 		}
 		fmt.Println(fmt.Sprintf("Got CSRF\nToken: %s", csrfToken.Token))
 
-		page, err := mw.GetPage(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, pageName)
+		page, err := mw.GetPage(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, utils.FormatPageNameInput(pageName))
 		if err != nil {
 			fmt.Println(err)
 			panic("Failed to get page.")
