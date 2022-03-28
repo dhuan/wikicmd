@@ -2,36 +2,43 @@ package editor
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 )
 
 func Edit(content string) (string, error) {
-	if _, err := ioutil.TempFile("/var/tmp", "huahua"); err != nil {
+	fileName, err := mktemp()
+	if err != nil {
+		return "", err
+	}
+
+	if err := os.WriteFile(fileName, []byte(content), 0644); err != nil {
 		fmt.Println(err)
 		panic("lascou")
 	}
 
-	if err := os.WriteFile("/var/tmp/huahua", []byte(content), 0644); err != nil {
-		fmt.Println(err)
-		panic("lascou")
-	}
-
-	cmd := exec.Command("vim", "/var/tmp/huahua")
+	cmd := exec.Command("vim", fileName)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		panic("eita")
+		return "", err
 	}
 
-	fileContent, err := os.ReadFile("/var/tmp/huahua")
-
+	fileContent, err := os.ReadFile(fileName)
 	if err != nil {
-		panic("eita")
+		return "", err
 	}
 
 	return string(fileContent), nil
+}
+
+func mktemp() (string, error) {
+	result, err := exec.Command("mktemp").Output()
+	if err != nil {
+		return "", err
+	}
+
+	return string(result), nil
 }
