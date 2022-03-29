@@ -1,7 +1,6 @@
 package editor
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 )
@@ -13,8 +12,7 @@ func Edit(content string) (string, error) {
 	}
 
 	if err := os.WriteFile(fileName, []byte(content), 0644); err != nil {
-		fmt.Println(err)
-		panic("lascou")
+		return "", err
 	}
 
 	cmd := exec.Command("vim", fileName)
