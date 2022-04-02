@@ -39,3 +39,17 @@ func RegexTest(regex string, subject string) bool {
 
 	return match
 }
+
+func MapValueSearch[TMapKey comparable, TMapValue comparable](
+	subject map[TMapKey]TMapValue,
+	valueToBeSearched TMapValue,
+	fallback TMapKey,
+) TMapKey {
+	for key, value := range subject {
+		if value == valueToBeSearched {
+			return key
+		}
+	}
+
+	return fallback
+}

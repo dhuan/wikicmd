@@ -12,6 +12,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var MAP_WARNING_MESSAGE = map[mw.UploadWarning]string{
+	mw.UPLOAD_WARNING_SAME_FILE_NO_CHANGE: "File was not uploaded because the existing image is exactly the same.",
+}
+
 var uploadCmd = &cobra.Command{
 	Use:   "upload",
 	Short: "Upload images",
@@ -62,12 +66,28 @@ var uploadCmd = &cobra.Command{
 
 			fileName := filepath.Base(filePath)
 
-			err = mw.Upload(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, fileName, fileContent)
+			err, warnings := mw.Upload(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, fileName, fileContent)
 			if err != nil {
 				panic(err)
 			}
+
+			if len(warnings) > 0 {
+				handleUploadWarnings(warnings)
+			} else {
+				fmt.Println(fmt.Sprintf("File uploaded successfully: %s.", fileName))
+			}
 		}
 	},
+}
+
+func handleUploadWarnings(warnings []mw.UploadWarning) {
+	for _, warning := range warnings {
+		message, ok := MAP_WARNING_MESSAGE[warning]
+
+		if ok {
+			fmt.Println(fmt.Sprintf("WARNING: %s", message))
+		}
+	}
 }
 
 func validateImages(filePaths []string) []string {

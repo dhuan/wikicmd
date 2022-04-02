@@ -10,6 +10,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/dhuan/wikicmd/internal/utils"
 )
 
 type Config struct {
@@ -17,6 +19,13 @@ type Config struct {
 	Login       string
 	Password    string
 }
+
+type UploadWarning int
+
+const (
+	UPLOAD_WARNING_NONE                UploadWarning = iota
+	UPLOAD_WARNING_SAME_FILE_NO_CHANGE               = iota
+)
 
 type LoginTokenSet struct {
 	Token  string
@@ -90,6 +99,10 @@ type loginResponse struct {
 		LgUserId   int    `json:"lguserid"`
 		LgUsername string `json:"lgusername"`
 	} `json:"login"`
+}
+
+var MAP_MW_ERROR_WARNING = map[UploadWarning]string{
+	UPLOAD_WARNING_SAME_FILE_NO_CHANGE: "fileexists-no-change",
 }
 
 func GetLoginToken(config *Config) (*LoginTokenSet, error) {
@@ -172,7 +185,7 @@ func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, 
 	)
 }
 
-func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) error {
+func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) (error, []UploadWarning) {
 	buffer := &bytes.Buffer{}
 	writer := multipart.NewWriter(buffer)
 
@@ -188,23 +201,23 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 		err := writer.WriteField(key, value)
 
 		if err != nil {
-			return err
+			return err, []UploadWarning{}
 		}
 	}
 
 	part, err := writer.CreateFormFile("file", fileName)
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
 	}
 
 	_, err = io.Copy(part, fileContent)
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
 	}
 
 	err = writer.Close()
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
 	}
 
 	request, err := http.NewRequest(
@@ -213,7 +226,7 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 		buffer,
 	)
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
 	}
 
 	request.Header.Set("Content-Type", writer.FormDataContentType())
@@ -222,25 +235,38 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
 	}
 
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
 	}
 
 	decodedJson := &uploadResponse{}
 	err = json.Unmarshal(bodyBytes, &decodedJson)
 	if err != nil {
-		return err
+		return err, []UploadWarning{}
+	}
+
+	warning := resolveUploadWarningFromUploadResponse(decodedJson)
+	if warning != UPLOAD_WARNING_NONE {
+		return nil, []UploadWarning{warning}
 	}
 
 	if decodedJson.Error.Code != "" {
-		return errors.New(fmt.Sprintf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info))
+		return errors.New(fmt.Sprintf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info)), []UploadWarning{}
 	}
 
-	return nil
+	return err, []UploadWarning{}
+}
+
+func resolveUploadWarningFromUploadResponse(response *uploadResponse) UploadWarning {
+	if response.Error.Code == "" {
+		return UPLOAD_WARNING_NONE
+	}
+
+	return utils.MapValueSearch[UploadWarning, string](MAP_MW_ERROR_WARNING, response.Error.Code, UPLOAD_WARNING_NONE)
 }
 
 func parseGetApiCredentials(decodedJson *loginTokenResponse, response *http.Response) (*LoginTokenSet, error) {
