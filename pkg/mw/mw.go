@@ -1,9 +1,12 @@
 package mw
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
@@ -36,6 +39,10 @@ type Page struct {
 	Content string
 }
 
+type UploadResult struct {
+	Success bool
+}
+
 type ApiCredentials struct {
 	CsrfToken   *CsrfToken
 	LoginResult *LoginResult
@@ -65,6 +72,16 @@ type getPageResponse struct {
 	Parse struct {
 		Wikitext string `json:"wikitext"`
 	} `json:"parse"`
+}
+
+type uploadResponse struct {
+	Upload struct {
+		Result string `json:"result"`
+	} `json:"upload"`
+	Error struct {
+		Code string `json:"code"`
+		Info string `json:"info"`
+	} `json:"error"`
 }
 
 type loginResponse struct {
@@ -155,6 +172,77 @@ func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, 
 	)
 }
 
+func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) error {
+	buffer := &bytes.Buffer{}
+	writer := multipart.NewWriter(buffer)
+
+	values := map[string]string{
+		"action":         "upload",
+		"format":         "json",
+		"filename":       fileName,
+		"ignorewarnings": "1",
+		"token":          credentials.CsrfToken.Token,
+	}
+
+	for key, value := range values {
+		err := writer.WriteField(key, value)
+
+		if err != nil {
+			return err
+		}
+	}
+
+	part, err := writer.CreateFormFile("file", fileName)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(part, fileContent)
+	if err != nil {
+		return err
+	}
+
+	err = writer.Close()
+	if err != nil {
+		return err
+	}
+
+	request, err := http.NewRequest(
+		"POST",
+		fmt.Sprintf("%s/api.php", config.BaseAddress),
+		buffer,
+	)
+	if err != nil {
+		return err
+	}
+
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	request.Header.Set("Cookie", credentials.LoginResult.Cookie)
+
+	client := &http.Client{}
+	response, err := client.Do(request)
+	if err != nil {
+		return err
+	}
+
+	bodyBytes, err := io.ReadAll(response.Body)
+	if err != nil {
+		return err
+	}
+
+	decodedJson := &uploadResponse{}
+	err = json.Unmarshal(bodyBytes, &decodedJson)
+	if err != nil {
+		return err
+	}
+
+	if decodedJson.Error.Code != "" {
+		return errors.New(fmt.Sprintf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info))
+	}
+
+	return nil
+}
+
 func parseGetApiCredentials(decodedJson *loginTokenResponse, response *http.Response) (*LoginTokenSet, error) {
 	token := decodedJson.Query.Tokens.Logintoken
 	cookie := response.Header.Get("Set-Cookie")
@@ -178,6 +266,10 @@ func parseEditResponse(decodedJson *editResponse, response *http.Response) (*Edi
 
 func parseGetPageResponse(decodedJson *getPageResponse, response *http.Response) (*Page, error) {
 	return &Page{decodedJson.Parse.Wikitext}, nil
+}
+
+func parseUploadResponse(decodedJson *uploadResponse, response *http.Response) (*UploadResult, error) {
+	return &UploadResult{true}, nil
 }
 
 func requestWrapper[D interface{}, T interface{}](
