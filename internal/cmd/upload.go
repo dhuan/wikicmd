@@ -31,26 +31,12 @@ var uploadCmd = &cobra.Command{
 			Password:    config.Password,
 		}
 
-		loginTokenSet, err := mw.GetLoginToken(&wikiConfig)
+		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
 		if err != nil {
-			panic("Failed to get login token.")
+			panic(err)
 		}
-		fmt.Println(fmt.Sprintf("Got Login Token Set\nCookie: %s\nToken:%s", loginTokenSet.Cookie, loginTokenSet.Token))
-
-		loginResult, err := mw.Login(&wikiConfig, loginTokenSet)
-		if err != nil {
-			panic("Failed to login.")
-		}
-		fmt.Println(fmt.Sprintf("Got Login Result Set\nCookie: %s", loginResult.Cookie))
-
-		csrfToken, err := mw.GetCsrfToken(&wikiConfig, loginTokenSet, loginResult)
-		if err != nil {
-			panic("Failed to get csrf token.")
-		}
-		fmt.Println(fmt.Sprintf("Got CSRF\nToken: %s", csrfToken.Token))
 
 		failedImages := validateImages(filePaths)
-
 		if len(failedImages) > 0 {
 			failedImagesStr := strings.Join(failedImages, "\n")
 			panic(fmt.Sprintf("The following files cannot be uploaded:\n%s", failedImagesStr))
@@ -67,7 +53,7 @@ var uploadCmd = &cobra.Command{
 
 			fileName := filepath.Base(filePath)
 
-			err, warnings, uploaded := mw.Upload(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, fileName, fileContent)
+			err, warnings, uploaded := mw.Upload(&wikiConfig, apiCredentials, fileName, fileContent)
 			if uploaded {
 				uploadedCount = uploadedCount + 1
 			}
