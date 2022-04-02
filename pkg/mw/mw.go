@@ -9,7 +9,6 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
-	"strings"
 
 	"github.com/dhuan/wikicmd/internal/utils"
 )
@@ -57,50 +56,6 @@ type ApiCredentials struct {
 	LoginResult *LoginResult
 }
 
-type loginTokenResponse struct {
-	Query struct {
-		Tokens struct {
-			Logintoken string `json:"logintoken"`
-		} `json:"tokens"`
-	} `json:"query"`
-}
-
-type csrfTokenResponse struct {
-	Query struct {
-		Tokens struct {
-			CsrfToken string `json:"csrftoken"`
-		} `json:"tokens"`
-	} `json:"query"`
-}
-
-type editResponse struct {
-	Status int `json:"status"`
-}
-
-type getPageResponse struct {
-	Parse struct {
-		Wikitext string `json:"wikitext"`
-	} `json:"parse"`
-}
-
-type uploadResponse struct {
-	Upload struct {
-		Result string `json:"result"`
-	} `json:"upload"`
-	Error struct {
-		Code string `json:"code"`
-		Info string `json:"info"`
-	} `json:"error"`
-}
-
-type loginResponse struct {
-	Login struct {
-		Result     string `json:"result"`
-		LgUserId   int    `json:"lguserid"`
-		LgUsername string `json:"lgusername"`
-	} `json:"login"`
-}
-
 var MAP_MW_ERROR_WARNING = map[UploadWarning]string{
 	UPLOAD_WARNING_SAME_FILE_NO_CHANGE: "fileexists-no-change",
 }
@@ -125,52 +80,6 @@ func GetApiCredentials(config *Config) (*ApiCredentials, error) {
 	fmt.Println(fmt.Sprintf("Got CSRF\nToken: %s", csrfToken.Token))
 
 	return &ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, nil
-}
-
-func getLoginToken(config *Config) (*LoginTokenSet, error) {
-	return requestWrapper[loginTokenResponse, LoginTokenSet](
-		fmt.Sprintf("%s/api.php?action=query&format=json&meta=tokens&type=login", config.BaseAddress),
-		"GET",
-		url.Values{},
-		&loginTokenResponse{},
-		&LoginTokenSet{},
-		parseGetApiCredentials,
-		map[string]string{},
-	)
-}
-
-func login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
-	return requestWrapper[loginResponse, LoginResult](
-		fmt.Sprintf("%s/api.php", config.BaseAddress),
-		"POST",
-		url.Values{
-			"format":     {"json"},
-			"action":     {"login"},
-			"lgname":     {config.Login},
-			"lgpassword": {config.Password},
-			"lgtoken":    {loginTokenSet.Token},
-		},
-		&loginResponse{},
-		&LoginResult{},
-		parseLoginResponse,
-		map[string]string{
-			"Cookie": loginTokenSet.Cookie,
-		},
-	)
-}
-
-func getCsrfToken(config *Config, loginTokenSet *LoginTokenSet, loginResult *LoginResult) (*CsrfToken, error) {
-	return requestWrapper[csrfTokenResponse, CsrfToken](
-		fmt.Sprintf("%s/api.php?action=query&format=json&meta=tokens", config.BaseAddress),
-		"GET",
-		url.Values{},
-		&csrfTokenResponse{},
-		&CsrfToken{},
-		parseCsrfTokenResponse,
-		map[string]string{
-			"Cookie": loginResult.Cookie,
-		},
-	)
 }
 
 func Edit(config *Config, credentials *ApiCredentials, title string, content string) (*EditResult, error) {
@@ -289,79 +198,4 @@ func resolveUploadWarningFromUploadResponse(response *uploadResponse) UploadWarn
 	}
 
 	return utils.MapValueSearch[UploadWarning, string](MAP_MW_ERROR_WARNING, response.Error.Code, UPLOAD_WARNING_NONE)
-}
-
-func parseGetApiCredentials(decodedJson *loginTokenResponse, response *http.Response) (*LoginTokenSet, error) {
-	token := decodedJson.Query.Tokens.Logintoken
-	cookie := response.Header.Get("Set-Cookie")
-
-	return &LoginTokenSet{token, cookie}, nil
-}
-
-func parseLoginResponse(decodedJson *loginResponse, response *http.Response) (*LoginResult, error) {
-	cookie := response.Header.Get("Set-Cookie")
-
-	return &LoginResult{cookie}, nil
-}
-
-func parseCsrfTokenResponse(decodedJson *csrfTokenResponse, response *http.Response) (*CsrfToken, error) {
-	return &CsrfToken{decodedJson.Query.Tokens.CsrfToken}, nil
-}
-
-func parseEditResponse(decodedJson *editResponse, response *http.Response) (*EditResult, error) {
-	return &EditResult{true}, nil
-}
-
-func parseGetPageResponse(decodedJson *getPageResponse, response *http.Response) (*Page, error) {
-	return &Page{decodedJson.Parse.Wikitext}, nil
-}
-
-func parseUploadResponse(decodedJson *uploadResponse, response *http.Response) (*UploadResult, error) {
-	return &UploadResult{true}, nil
-}
-
-func requestWrapper[D interface{}, T interface{}](
-	url string,
-	method string,
-	postData url.Values,
-	obj *D,
-	result *T,
-	parse func(obj *D, response *http.Response,
-	) (*T, error), headers map[string]string) (*T, error) {
-	var response *http.Response
-	var err error
-
-	client := &http.Client{}
-
-	req, err := http.NewRequest(method, url, strings.NewReader(postData.Encode()))
-	if err != nil {
-		return result, err
-	}
-
-	if method == "POST" {
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	}
-
-	for headerKey, headerValue := range headers {
-		req.Header.Set(headerKey, headerValue)
-	}
-
-	response, err = client.Do(req)
-	if err != nil {
-		return result, err
-	}
-
-	bodyBytes, err := io.ReadAll(response.Body)
-	if err != nil {
-		return result, err
-	}
-
-	decodedJson := obj
-
-	err = json.Unmarshal(bodyBytes, &decodedJson)
-	if err != nil {
-		return result, err
-	}
-
-	return parse(obj, response)
 }
