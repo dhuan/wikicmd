@@ -56,6 +56,7 @@ var uploadCmd = &cobra.Command{
 			panic(fmt.Sprintf("The following files cannot be uploaded:\n%s", failedImagesStr))
 		}
 
+		uploadedCount := 0
 		for _, filePath := range filePaths {
 			fmt.Println(fmt.Sprintf("Uploading %s", filePath))
 
@@ -66,7 +67,10 @@ var uploadCmd = &cobra.Command{
 
 			fileName := filepath.Base(filePath)
 
-			err, warnings := mw.Upload(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, fileName, fileContent)
+			err, warnings, uploaded := mw.Upload(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, fileName, fileContent)
+			if uploaded {
+				uploadedCount = uploadedCount + 1
+			}
 			if err != nil {
 				panic(err)
 			}
@@ -77,6 +81,8 @@ var uploadCmd = &cobra.Command{
 				fmt.Println(fmt.Sprintf("File uploaded successfully: %s.", fileName))
 			}
 		}
+
+		fmt.Println(fmt.Sprintf("%d file(s) have been uploaded.\nDone!", uploadedCount))
 	},
 }
 

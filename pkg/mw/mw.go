@@ -185,7 +185,7 @@ func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, 
 	)
 }
 
-func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) (error, []UploadWarning) {
+func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) (error, []UploadWarning, bool) {
 	buffer := &bytes.Buffer{}
 	writer := multipart.NewWriter(buffer)
 
@@ -201,23 +201,23 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 		err := writer.WriteField(key, value)
 
 		if err != nil {
-			return err, []UploadWarning{}
+			return err, []UploadWarning{}, false
 		}
 	}
 
 	part, err := writer.CreateFormFile("file", fileName)
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	_, err = io.Copy(part, fileContent)
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	err = writer.Close()
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	request, err := http.NewRequest(
@@ -226,7 +226,7 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 		buffer,
 	)
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	request.Header.Set("Content-Type", writer.FormDataContentType())
@@ -235,30 +235,30 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	decodedJson := &uploadResponse{}
 	err = json.Unmarshal(bodyBytes, &decodedJson)
 	if err != nil {
-		return err, []UploadWarning{}
+		return err, []UploadWarning{}, false
 	}
 
 	warning := resolveUploadWarningFromUploadResponse(decodedJson)
 	if warning != UPLOAD_WARNING_NONE {
-		return nil, []UploadWarning{warning}
+		return nil, []UploadWarning{warning}, false
 	}
 
 	if decodedJson.Error.Code != "" {
-		return errors.New(fmt.Sprintf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info)), []UploadWarning{}
+		return errors.New(fmt.Sprintf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info)), []UploadWarning{}, false
 	}
 
-	return err, []UploadWarning{}
+	return nil, []UploadWarning{}, true
 }
 
 func resolveUploadWarningFromUploadResponse(response *uploadResponse) UploadWarning {
