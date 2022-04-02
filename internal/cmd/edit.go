@@ -28,25 +28,12 @@ var editCmd = &cobra.Command{
 			Password:    config.Password,
 		}
 
-		loginTokenSet, err := mw.GetLoginToken(&wikiConfig)
+		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
 		if err != nil {
-			panic("Failed to get login token.")
+			panic(err)
 		}
-		fmt.Println(fmt.Sprintf("Got Login Token Set\nCookie: %s\nToken:%s", loginTokenSet.Cookie, loginTokenSet.Token))
 
-		loginResult, err := mw.Login(&wikiConfig, loginTokenSet)
-		if err != nil {
-			panic("Failed to login.")
-		}
-		fmt.Println(fmt.Sprintf("Got Login Result Set\nCookie: %s", loginResult.Cookie))
-
-		csrfToken, err := mw.GetCsrfToken(&wikiConfig, loginTokenSet, loginResult)
-		if err != nil {
-			panic("Failed to get csrf token.")
-		}
-		fmt.Println(fmt.Sprintf("Got CSRF\nToken: %s", csrfToken.Token))
-
-		page, err := mw.GetPage(&wikiConfig, &mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, utils.FormatPageNameInput(pageName))
+		page, err := mw.GetPage(&wikiConfig, apiCredentials, utils.FormatPageNameInput(pageName))
 		if err != nil {
 			fmt.Println(err)
 			panic("Failed to get page.")
@@ -61,7 +48,7 @@ var editCmd = &cobra.Command{
 
 		_, err = mw.Edit(
 			&wikiConfig,
-			&mw.ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult},
+			apiCredentials,
 			pageName,
 			newContent,
 		)

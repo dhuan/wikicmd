@@ -105,7 +105,29 @@ var MAP_MW_ERROR_WARNING = map[UploadWarning]string{
 	UPLOAD_WARNING_SAME_FILE_NO_CHANGE: "fileexists-no-change",
 }
 
-func GetLoginToken(config *Config) (*LoginTokenSet, error) {
+func GetApiCredentials(config *Config) (*ApiCredentials, error) {
+	loginTokenSet, err := getLoginToken(config)
+	if err != nil {
+		return &ApiCredentials{}, errors.New("Failed to get login token.")
+	}
+	fmt.Println(fmt.Sprintf("Got Login Token Set\nCookie: %s\nToken:%s", loginTokenSet.Cookie, loginTokenSet.Token))
+
+	loginResult, err := login(config, loginTokenSet)
+	if err != nil {
+		return &ApiCredentials{}, errors.New("Failed to login.")
+	}
+	fmt.Println(fmt.Sprintf("Got Login Result Set\nCookie: %s", loginResult.Cookie))
+
+	csrfToken, err := getCsrfToken(config, loginTokenSet, loginResult)
+	if err != nil {
+		return &ApiCredentials{}, errors.New("Failed to get csrf token.")
+	}
+	fmt.Println(fmt.Sprintf("Got CSRF\nToken: %s", csrfToken.Token))
+
+	return &ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, nil
+}
+
+func getLoginToken(config *Config) (*LoginTokenSet, error) {
 	return requestWrapper[loginTokenResponse, LoginTokenSet](
 		fmt.Sprintf("%s/api.php?action=query&format=json&meta=tokens&type=login", config.BaseAddress),
 		"GET",
@@ -117,7 +139,7 @@ func GetLoginToken(config *Config) (*LoginTokenSet, error) {
 	)
 }
 
-func Login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
+func login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
 	return requestWrapper[loginResponse, LoginResult](
 		fmt.Sprintf("%s/api.php", config.BaseAddress),
 		"POST",
@@ -137,7 +159,7 @@ func Login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
 	)
 }
 
-func GetCsrfToken(config *Config, loginTokenSet *LoginTokenSet, loginResult *LoginResult) (*CsrfToken, error) {
+func getCsrfToken(config *Config, loginTokenSet *LoginTokenSet, loginResult *LoginResult) (*CsrfToken, error) {
 	return requestWrapper[csrfTokenResponse, CsrfToken](
 		fmt.Sprintf("%s/api.php?action=query&format=json&meta=tokens", config.BaseAddress),
 		"GET",
