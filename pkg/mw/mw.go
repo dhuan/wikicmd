@@ -44,6 +44,7 @@ type EditResult struct {
 }
 
 type Page struct {
+	Name    string
 	Content string
 }
 
@@ -59,6 +60,8 @@ type ApiCredentials struct {
 var MAP_MW_ERROR_WARNING = map[UploadWarning]string{
 	UPLOAD_WARNING_SAME_FILE_NO_CHANGE: "fileexists-no-change",
 }
+
+var FIRST_RUN = ""
 
 func GetApiCredentials(config *Config) (*ApiCredentials, error) {
 	loginTokenSet, err := getLoginToken(config)
@@ -104,6 +107,36 @@ func Edit(config *Config, credentials *ApiCredentials, title string, content str
 	)
 }
 
+func GetAllPages(config *Config, credentials *ApiCredentials, continuation string) ([]Page, string, bool, error) {
+	response, err := requestWrapper[getAllPagesResponse, getAllPagesResponse](
+		fmt.Sprintf("%s/api.php?action=query&format=json&list=allpages&rawcontinue=1&aplimit=5", config.BaseAddress),
+		"GET",
+		url.Values{},
+		&getAllPagesResponse{},
+		&getAllPagesResponse{},
+		func(decodedJson *getAllPagesResponse, response *http.Response) (*getAllPagesResponse, error) {
+			return decodedJson, nil
+		},
+		map[string]string{},
+	)
+	if err != nil {
+		return []Page{}, continuation, true, err
+	}
+
+	pages := make([]Page, 0)
+	for _, page := range response.Query.AllPages {
+		fetchedPage, err := GetPage(config, credentials, utils.FormatPageNameInput(page.Title))
+
+		if err != nil {
+			return []Page{}, continuation, true, err
+		}
+
+		pages = append(pages, Page{page.Title, fetchedPage.Content})
+	}
+
+	return pages, continuation, true, nil
+}
+
 func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, error) {
 	return requestWrapper[getPageResponse, Page](
 		fmt.Sprintf("%s/api.php?action=parse&format=json&page=%s&prop=wikitext&formatversion=2", config.BaseAddress, title),
@@ -111,7 +144,7 @@ func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, 
 		url.Values{},
 		&getPageResponse{},
 		&Page{},
-		parseGetPageResponse,
+		parseGetPageResponse(title),
 		map[string]string{},
 	)
 }

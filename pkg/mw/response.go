@@ -26,6 +26,20 @@ type getPageResponse struct {
 	} `json:"parse"`
 }
 
+type getAllPagesResponse struct {
+	QueryContinue struct {
+		AllPages struct {
+			ApContinue string `json:"apcontinue"`
+		} `json:"allpages"`
+	} `json:"query-continue"`
+	Query struct {
+		AllPages []struct {
+			PageId int    `json:"pageid"`
+			Title  string `json:"title"`
+		} `json:"allpages"`
+	} `json:"query"`
+}
+
 type uploadResponse struct {
 	Upload struct {
 		Result string `json:"result"`
