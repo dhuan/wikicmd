@@ -32,17 +32,20 @@ var exportCmd = &cobra.Command{
 			panic(err)
 		}
 
-		err = runExport(&wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN)
+		exportCount, err := runExport(&wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
 		if err != nil {
 			panic(err)
 		}
+
+		fmt.Println(fmt.Sprintf("%d page(s) have been exported.\nDone!", exportCount))
 	},
 }
 
-func runExport(config *mw.Config, apiCredentials *mw.ApiCredentials, exportTo string, continuation string) error {
+func runExport(config *mw.Config, apiCredentials *mw.ApiCredentials, exportTo string, continuation string, exportCount int) (int, error) {
 	pages, nextContinuation, finished, err := mw.GetAllPages(config, apiCredentials, continuation)
+	exportCount = exportCount + len(pages)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	for _, page := range pages {
@@ -58,10 +61,10 @@ func runExport(config *mw.Config, apiCredentials *mw.ApiCredentials, exportTo st
 	}
 
 	if finished {
-		return nil
+		return exportCount, nil
 	}
 
 	pages = make([]mw.Page, 0, 0)
-
-	return runExport(config, apiCredentials, exportTo, nextContinuation)
+	fmt.Println("Fetching next batch.")
+	return runExport(config, apiCredentials, exportTo, nextContinuation, exportCount)
 }

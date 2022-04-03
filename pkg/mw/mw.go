@@ -108,8 +108,14 @@ func Edit(config *Config, credentials *ApiCredentials, title string, content str
 }
 
 func GetAllPages(config *Config, credentials *ApiCredentials, continuation string) ([]Page, string, bool, error) {
+	requestUrl := fmt.Sprintf("%s/api.php?action=query&format=json&list=allpages&rawcontinue=1&aplimit=5", config.BaseAddress)
+
+	if continuation != FIRST_RUN {
+		requestUrl = fmt.Sprintf("%s&apcontinue=%s", requestUrl, continuation)
+	}
+
 	response, err := requestWrapper[getAllPagesResponse, getAllPagesResponse](
-		fmt.Sprintf("%s/api.php?action=query&format=json&list=allpages&rawcontinue=1&aplimit=5", config.BaseAddress),
+		requestUrl,
 		"GET",
 		url.Values{},
 		&getAllPagesResponse{},
@@ -134,7 +140,10 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 		pages = append(pages, Page{page.Title, fetchedPage.Content})
 	}
 
-	return pages, continuation, true, nil
+	finished := response.QueryContinue.AllPages.ApContinue == ""
+	continuationNew := response.QueryContinue.AllPages.ApContinue
+
+	return pages, continuationNew, finished, nil
 }
 
 func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, error) {
