@@ -23,8 +23,10 @@ func parseEditResponse(decodedJson *editResponse, response *http.Response) (*Edi
 	return &EditResult{true}, nil
 }
 
-func parseGetPageResponse(decodedJson *getPageResponse, response *http.Response) (*Page, error) {
-	return &Page{decodedJson.Parse.Wikitext}, nil
+func parseGetPageResponse(pageName string) func(*getPageResponse, *http.Response) (*Page, error) {
+	return func(decodedJson *getPageResponse, response *http.Response) (*Page, error) {
+		return &Page{pageName, decodedJson.Parse.Wikitext}, nil
+	}
 }
 
 func parseUploadResponse(decodedJson *uploadResponse, response *http.Response) (*UploadResult, error) {
