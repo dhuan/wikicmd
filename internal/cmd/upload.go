@@ -33,7 +33,9 @@ var uploadCmd = &cobra.Command{
 
 		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
 		if err != nil {
-			panic(err)
+			handleErrorGettingApiCredentials(err, config.User, config.Address)
+
+			os.Exit(1)
 		}
 
 		failedImages := validateImages(filePaths)

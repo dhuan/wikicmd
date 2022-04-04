@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/dhuan/wikicmd/internal/config"
 	"github.com/dhuan/wikicmd/internal/utils"
@@ -30,7 +31,9 @@ var editCmd = &cobra.Command{
 
 		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
 		if err != nil {
-			panic(err)
+			handleErrorGettingApiCredentials(err, config.User, config.Address)
+
+			os.Exit(1)
 		}
 
 		page, err := mw.GetPage(&wikiConfig, apiCredentials, utils.FormatPageNameInput(pageName))

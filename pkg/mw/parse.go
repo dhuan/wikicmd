@@ -1,6 +1,8 @@
 package mw
 
-import "net/http"
+import (
+	"net/http"
+)
 
 func parseGetApiCredentials(decodedJson *loginTokenResponse, response *http.Response) (*LoginTokenSet, error) {
 	token := decodedJson.Query.Tokens.Logintoken
@@ -10,6 +12,10 @@ func parseGetApiCredentials(decodedJson *loginTokenResponse, response *http.Resp
 }
 
 func parseLoginResponse(decodedJson *loginResponse, response *http.Response) (*LoginResult, error) {
+	if decodedJson.Login.Result == "Failed" {
+		return &LoginResult{}, ErrLogin
+	}
+
 	cookie := response.Header.Get("Set-Cookie")
 
 	return &LoginResult{cookie}, nil
