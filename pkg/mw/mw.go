@@ -72,7 +72,7 @@ func GetApiCredentials(config *Config) (*ApiCredentials, error) {
 
 	loginResult, err := login(config, loginTokenSet)
 	if err != nil {
-		return &ApiCredentials{}, errors.New("Failed to login.")
+		return &ApiCredentials{}, err
 	}
 	fmt.Println(fmt.Sprintf("Got Login Result Set\nCookie: %s", loginResult.Cookie))
 

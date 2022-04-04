@@ -29,7 +29,9 @@ var exportCmd = &cobra.Command{
 
 		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
 		if err != nil {
-			panic(err)
+			handleErrorGettingApiCredentials(err, config.User, config.Address)
+
+			os.Exit(1)
 		}
 
 		exportCount, err := runExport(&wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
