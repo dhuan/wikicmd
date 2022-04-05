@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/dhuan/wikicmd/internal/config"
 	"github.com/dhuan/wikicmd/internal/utils"
 	"github.com/dhuan/wikicmd/pkg/mw"
 	"github.com/spf13/cobra"
@@ -20,23 +19,7 @@ var uploadCmd = &cobra.Command{
 	Use:   "upload",
 	Short: "Upload images",
 	Run: func(cmd *cobra.Command, filePaths []string) {
-		config, err := config.Get()
-		if err != nil {
-			panic(err)
-		}
-
-		wikiConfig := mw.Config{
-			BaseAddress: config.Address,
-			Login:       config.User,
-			Password:    config.Password,
-		}
-
-		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
-		if err != nil {
-			handleErrorGettingApiCredentials(err, config.User, config.Address)
-
-			os.Exit(1)
-		}
+		wikiConfig, apiCredentials := beforeCommand()
 
 		failedImages := validateImages(filePaths)
 		if len(failedImages) > 0 {
@@ -55,7 +38,7 @@ var uploadCmd = &cobra.Command{
 
 			fileName := filepath.Base(filePath)
 
-			err, warnings, uploaded := mw.Upload(&wikiConfig, apiCredentials, fileName, fileContent)
+			err, warnings, uploaded := mw.Upload(wikiConfig, apiCredentials, fileName, fileContent)
 			if uploaded {
 				uploadedCount = uploadedCount + 1
 			}

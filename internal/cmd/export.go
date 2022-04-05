@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dhuan/wikicmd/internal/config"
 	"github.com/dhuan/wikicmd/pkg/mw"
 	"github.com/spf13/cobra"
 )
@@ -14,27 +13,10 @@ var exportCmd = &cobra.Command{
 	Short: "Export pages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		wikiConfig, apiCredentials := beforeCommand()
 		exportTo := args[0]
 
-		config, err := config.Get()
-		if err != nil {
-			panic(err)
-		}
-
-		wikiConfig := mw.Config{
-			BaseAddress: config.Address,
-			Login:       config.User,
-			Password:    config.Password,
-		}
-
-		apiCredentials, err := mw.GetApiCredentials(&wikiConfig)
-		if err != nil {
-			handleErrorGettingApiCredentials(err, config.User, config.Address)
-
-			os.Exit(1)
-		}
-
-		exportCount, err := runExport(&wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
+		exportCount, err := runExport(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
 		if err != nil {
 			panic(err)
 		}
