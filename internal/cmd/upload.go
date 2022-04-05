@@ -24,7 +24,9 @@ var uploadCmd = &cobra.Command{
 		failedImages := validateImages(filePaths)
 		if len(failedImages) > 0 {
 			failedImagesStr := strings.Join(failedImages, "\n")
-			panic(fmt.Sprintf("The following files cannot be uploaded:\n%s", failedImagesStr))
+			fmt.Println((fmt.Sprintf("The following files cannot be uploaded:\n%s", failedImagesStr)))
+
+			os.Exit(1)
 		}
 
 		uploadedCount := 0
@@ -71,12 +73,7 @@ func validateImages(filePaths []string) []string {
 	failedImages := make([]string, 0)
 
 	for _, filePath := range filePaths {
-		if extensionIsValid := utils.ExtensionMatches([]string{
-			"png",
-			"jpg",
-			"jpeg",
-			"gif",
-		}, filePath); !extensionIsValid {
+		if extensionIsValid := utils.ExtensionMatches(allowedExtensionsToBeUploaded, filePath); !extensionIsValid {
 			failedImages = append(failedImages, filePath)
 
 			continue
