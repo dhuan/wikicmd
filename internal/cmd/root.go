@@ -18,6 +18,7 @@ func Execute() error {
 	rootCmd.AddCommand(editCmd)
 	rootCmd.AddCommand(uploadCmd)
 	rootCmd.AddCommand(exportCmd)
+	rootCmd.AddCommand(importCmd)
 
 	return rootCmd.Execute()
 }
