@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -52,4 +54,40 @@ func MapValueSearch[TMapKey comparable, TMapValue comparable](
 	}
 
 	return fallback
+}
+
+func ValidateFiles(filePaths []string, acceptedExtensions []string) map[string]error {
+	validationErrors := make(map[string]error)
+
+	for _, filePath := range filePaths {
+		if !FileExists(filePath) {
+			validationErrors[filePath] = ErrFileDoesNotExist
+
+			continue
+		}
+
+		if !ExtensionMatches(acceptedExtensions, filePath) {
+			validationErrors[filePath] = ErrExtensionNotAccepted
+
+			continue
+		}
+	}
+
+	return validationErrors
+}
+
+func FileExists(filePath string) bool {
+	fileInfo, err := os.Stat(filePath)
+
+	if err != nil || fileInfo.IsDir() {
+		return false
+	}
+
+	return true
+}
+
+func FilePathToPageName(filePath string) string {
+	fileName := filepath.Base(filePath)
+
+	return strings.Replace(fileName, ".wikitext", "", 1)
 }
