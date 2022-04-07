@@ -19,6 +19,7 @@ func Execute() error {
 	rootCmd.AddCommand(uploadCmd)
 	rootCmd.AddCommand(exportCmd)
 	rootCmd.AddCommand(importCmd)
+	rootCmd.AddCommand(configCmd)
 
 	return rootCmd.Execute()
 }

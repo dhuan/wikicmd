@@ -32,6 +32,15 @@ func Edit(content string) (string, error) {
 	return string(fileContent), nil
 }
 
+func EditFile(filePath string) error {
+	cmd := exec.Command("vim", filePath)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
 func mktemp() (string, error) {
 	result, err := exec.Command("mktemp").Output()
 	if err != nil {
