@@ -15,7 +15,7 @@ var defaultWiki = "https://wikipedia.org"
 
 var configCmd = &cobra.Command{
 	Use:   "config",
-	Short: "Edit your configuration file.",
+	Short: "Edit your configuration or create a new one",
 	Run: func(cmd *cobra.Command, filePaths []string) {
 		configFilePath, configFileExists, err := config.GetConfigFilePath()
 		if err != nil {
@@ -23,7 +23,7 @@ var configCmd = &cobra.Command{
 		}
 
 		if !configFileExists || FlagConfigNew {
-			confirmed, err := newConfigWizard(configFilePath)
+			confirmed, err := newConfigWizard(configFilePath, FlagConfigNew)
 			if err != nil {
 				panic(err)
 			}
@@ -47,8 +47,13 @@ var configCmd = &cobra.Command{
 	},
 }
 
-func newConfigWizard(filePath string) (bool, error) {
-	fmt.Println("You don't seem to have any configuration file. Let's create one.")
+func newConfigWizard(filePath string, requestingNew bool) (bool, error) {
+	if requestingNew {
+		fmt.Println("Let's create a new configuration file. Be aware that your existing configuration file will be overwritten at the end of this process.")
+	} else {
+		fmt.Println("You don't seem to have any configuration file. Let's create one.")
+	}
+
 	fmt.Println("")
 	inputWikiAddress := input.TextPrompt(fmt.Sprintf("Wiki address: (%s) ", defaultWiki), defaultWiki)
 	inputLogin := input.TextPrompt("Login: ", "")
