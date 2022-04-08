@@ -22,7 +22,7 @@ var configCmd = &cobra.Command{
 			panic(err)
 		}
 
-		if !configFileExists {
+		if !configFileExists || FlagConfigNew {
 			confirmed, err := newConfigWizard(configFilePath)
 			if err != nil {
 				panic(err)
