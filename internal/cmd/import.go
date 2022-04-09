@@ -3,7 +3,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/dhuan/wikicmd/internal/utils"
 	"github.com/dhuan/wikicmd/pkg/mw"
@@ -12,43 +14,111 @@ import (
 
 var importCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import pages",
+	Short: "Import pages and images",
 	Run: func(cmd *cobra.Command, filePaths []string) {
 		wikiConfig, apiCredentials := beforeCommand()
 
-		fileValidationErrors := utils.ValidateFiles(filePaths, []string{"wikitext"})
+		fileValidationErrors := utils.ValidateFiles(filePaths, allowedExtensionsToBeImported)
 		if len(fileValidationErrors) > 0 {
 			handleFileValidationErrors(fileValidationErrors)
 
 			os.Exit(1)
 		}
 
-		runImport(wikiConfig, apiCredentials, filePaths)
+		uploadedCount := runImport(wikiConfig, apiCredentials, filePaths)
 
-		fmt.Println(fmt.Sprintf("%d page(s) have been imported.\nDone!", len(filePaths)))
+		fmt.Println(fmt.Sprintf("%d item(s) have been imported.\nDone!", uploadedCount))
 	},
 }
 
-func runImport(wikiConfig *mw.Config, apiCredentials *mw.ApiCredentials, filePaths []string) {
+func runImport(wikiConfig *mw.Config, apiCredentials *mw.ApiCredentials, filePaths []string) int {
+	uploadedCount := 0
 	for _, filePath := range filePaths {
 		fmt.Println(fmt.Sprintf("Importing %s", filePath))
 
-		fileContent, err := os.ReadFile(filePath)
+		file, err := os.Open(filePath)
 		if err != nil {
-			panic("Failed to read file.")
+			panic(err)
 		}
 
-		pageName := utils.FilePathToPageName(filePath)
-		_, err = mw.Edit(
-			wikiConfig,
-			apiCredentials,
-			pageName,
-			string(fileContent),
-		)
+		fileContent, err := os.ReadFile(filePath)
 		if err != nil {
-			panic("Failed to edit.")
+			panic(err)
 		}
+
+		if fileIsPage(filePath) {
+			if err = importPage(wikiConfig, apiCredentials, filePath, fileContent); err != nil {
+				panic(err)
+			}
+
+			uploadedCount = uploadedCount + 1
+
+			continue
+		}
+
+		if fileIsImage(filePath) {
+			uploadWarnings, uploaded, err := importImage(wikiConfig, apiCredentials, filePath, file)
+			if err != nil {
+				panic(err)
+			}
+
+			handleUploadWarnings(uploadWarnings)
+
+			if uploaded {
+				uploadedCount = uploadedCount + 1
+			}
+
+			continue
+		}
+
+		panic("Something went wrong. Could not resolve type of file to be imported.")
 	}
+
+	return uploadedCount
+}
+
+func fileIsPage(filePath string) bool {
+	return utils.ExtensionMatches(pageExtensions, filePath)
+}
+
+func fileIsImage(filePath string) bool {
+	return utils.ExtensionMatches(imageExtensions, filePath)
+}
+
+func importImage(
+	wikiConfig *mw.Config,
+	apiCredentials *mw.ApiCredentials,
+	filePath string,
+	file io.Reader,
+) ([]mw.UploadWarning, bool, error) {
+	fileName := filepath.Base(filePath)
+
+	err, warnings, uploaded := mw.Upload(wikiConfig, apiCredentials, fileName, file)
+	if err != nil {
+		return []mw.UploadWarning{}, uploaded, err
+	}
+
+	return warnings, uploaded, nil
+}
+
+func importPage(
+	wikiConfig *mw.Config,
+	apiCredentials *mw.ApiCredentials,
+	filePath string,
+	fileContent []byte,
+) error {
+	pageName := utils.FilePathToPageName(filePath)
+	_, err := mw.Edit(
+		wikiConfig,
+		apiCredentials,
+		pageName,
+		string(fileContent),
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func handleFileValidationErrors(fileValidationErrors map[string]error) {
@@ -68,5 +138,19 @@ func handleFileValidationErrors(fileValidationErrors map[string]error) {
 		}
 
 		panic("This error is unknown.")
+	}
+}
+
+func handleUploadWarnings(warnings []mw.UploadWarning) {
+	if len(warnings) == 0 {
+		return
+	}
+
+	for _, warning := range warnings {
+		message, ok := MAP_UPLOAD_WARNING_MESSAGE[warning]
+
+		if ok {
+			fmt.Println(fmt.Sprintf("WARNING: %s", message))
+		}
 	}
 }
