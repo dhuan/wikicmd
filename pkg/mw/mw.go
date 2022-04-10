@@ -48,6 +48,11 @@ type Page struct {
 	Content string
 }
 
+type Image struct {
+	Name    string
+	Content []byte
+}
+
 type UploadResult struct {
 	Success bool
 }
@@ -105,6 +110,44 @@ func Edit(config *Config, credentials *ApiCredentials, title string, content str
 			"Cookie": credentials.LoginResult.Cookie,
 		},
 	)
+}
+
+func GetAllImages(config *Config, credentials *ApiCredentials, continuation string) ([]Image, string, bool, error) {
+	images := make([]Image, 0)
+	requestUrl := fmt.Sprintf("%s/api.php?action=query&format=json&list=allimages&ailimit=5", config.BaseAddress)
+
+	if continuation != FIRST_RUN {
+		requestUrl = fmt.Sprintf("%s&aicontinue=%s", requestUrl, continuation)
+	}
+
+	response, err := requestWrapper[getAllImagesResponse, getAllImagesResponse](
+		requestUrl,
+		"GET",
+		url.Values{},
+		&getAllImagesResponse{},
+		&getAllImagesResponse{},
+		func(decodedJson *getAllImagesResponse, response *http.Response) (*getAllImagesResponse, error) {
+			return decodedJson, nil
+		},
+		map[string]string{},
+	)
+	if err != nil {
+		return []Image{}, continuation, true, err
+	}
+
+	for _, imageResponse := range response.Query.AllImages {
+		imageContent, err := utils.Wget(imageResponse.Url)
+		if err != nil {
+			return []Image{}, "", true, err
+		}
+
+		images = append(images, Image{imageResponse.Name, imageContent})
+	}
+
+	finished := response.Continue.AiContinue == ""
+	continuationNew := response.Continue.AiContinue
+
+	return images, continuationNew, finished, nil
 }
 
 func GetAllPages(config *Config, credentials *ApiCredentials, continuation string) ([]Page, string, bool, error) {

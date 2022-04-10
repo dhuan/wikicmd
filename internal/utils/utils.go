@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -90,4 +92,24 @@ func FilePathToPageName(filePath string) string {
 	fileName := filepath.Base(filePath)
 
 	return strings.Replace(fileName, ".wikitext", "", 1)
+}
+
+func Wget(url string) ([]byte, error) {
+	response, err := http.Get(url)
+	if err != nil {
+		return []byte{}, err
+	}
+	defer response.Body.Close()
+
+	return io.ReadAll(response.Body)
+}
+
+func AnyEquals[T comparable](list []T, value T) bool {
+	for _, item := range list {
+		if item == value {
+			return true
+		}
+	}
+
+	return false
 }
