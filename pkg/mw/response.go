@@ -40,6 +40,18 @@ type getAllPagesResponse struct {
 	} `json:"query"`
 }
 
+type getAllImagesResponse struct {
+	Continue struct {
+		AiContinue string `json:"aicontinue"`
+	} `json:"continue"`
+	Query struct {
+		AllImages []struct {
+			Name string `json:"name"`
+			Url  string `json:"url"`
+		} `json:"allimages"`
+	} `json:"query"`
+}
+
 type uploadResponse struct {
 	Upload struct {
 		Result string `json:"result"`
