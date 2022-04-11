@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -15,13 +14,32 @@ func FormatPageNameInput(pageName string) string {
 }
 
 func ExtensionMatches(extensionList []string, filePath string) bool {
-	extensionListRegex := make([]string, len(extensionList))
+	fileExtension := strings.ToLower(GetFileExtension(filePath))
 
-	for i, extension := range extensionList {
-		extensionListRegex[i] = fmt.Sprintf(".%s$", extension)
+	return AnyEquals(extensionList, fileExtension)
+}
+
+func GetFileExtension(filePath string) string {
+	return GetNthWord(filePath, ".", -1, "unknown")
+}
+
+func GetNthWord(str, divisor string, index int, fallback string) string {
+	splitResult := strings.Split(str, divisor)
+
+	computedIndex := index
+	if index < 0 {
+		computedIndex = len(splitResult) + index
 	}
 
-	return RegexTestAny(extensionListRegex, filePath)
+	if computedIndex < 0 {
+		return fallback
+	}
+
+	if computedIndex > (len(splitResult) - 1) {
+		return fallback
+	}
+
+	return splitResult[computedIndex]
 }
 
 func RegexTestAny(regexList []string, subject string) bool {
