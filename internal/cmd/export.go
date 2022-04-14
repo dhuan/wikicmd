@@ -15,9 +15,9 @@ var exportCmd = &cobra.Command{
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		var err error
-		exportTypeValid := validateExportTypeFlag(FlagExportType)
+		exportTypeValid := validateExportTypeFlag(flagExportType)
 		if !exportTypeValid {
-			fmt.Println(fmt.Sprintf("Type '%s' is not valid.\n\nThe valid types are: all,page,image.", FlagExportType))
+			fmt.Println(fmt.Sprintf("Type '%s' is not valid.\n\nThe valid types are: all,page,image.", flagExportType))
 
 			os.Exit(1)
 		}
@@ -26,7 +26,7 @@ var exportCmd = &cobra.Command{
 		exportTo := args[0]
 
 		exportCount := 0
-		if FlagExportType == export_type_all || FlagExportType == export_type_page {
+		if flagExportType == export_type_all || flagExportType == export_type_page {
 			exportCount, err = runExport(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
 			if err != nil {
 				panic(err)
@@ -34,7 +34,7 @@ var exportCmd = &cobra.Command{
 		}
 
 		exportImagesCount := 0
-		if FlagExportType == export_type_all || FlagExportType == export_type_image {
+		if flagExportType == export_type_all || flagExportType == export_type_image {
 			exportImagesCount, err = runExportImages(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
 			if err != nil {
 				panic(err)
