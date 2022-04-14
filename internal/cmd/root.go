@@ -5,12 +5,9 @@ import (
 )
 
 var (
-	cfgFile     string
-	userLicense string
-
 	//Flags
-	FlagConfigNew  bool
-	FlagExportType string
+	flagConfigNew  bool
+	flagExportType string
 
 	rootCmd = &cobra.Command{
 		Use:   "wikicmd",
@@ -19,8 +16,8 @@ var (
 )
 
 func Execute() error {
-	configCmd.Flags().BoolVarP(&FlagConfigNew, "new", "n", false, "Create new configuration file even if one already exists.")
-	exportCmd.Flags().StringVarP(&FlagExportType, "type", "t", "all", "Which type of item to export. (all/page/image)")
+	configCmd.Flags().BoolVarP(&flagConfigNew, "new", "n", false, "Create new configuration file even if one already exists.")
+	exportCmd.Flags().StringVarP(&flagExportType, "type", "t", "all", "Which type of item to export. (all/page/image)")
 
 	rootCmd.AddCommand(editCmd)
 	rootCmd.AddCommand(exportCmd)
