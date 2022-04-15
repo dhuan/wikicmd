@@ -7,14 +7,19 @@ import (
 
 var default_editor = "vim"
 
-func Edit(content string) (string, error) {
+func Edit(content string) (string, bool, error) {
 	fileName, err := mktemp()
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	if err := os.WriteFile(fileName, []byte(content), 0644); err != nil {
-		return "", err
+		return "", false, err
+	}
+
+	fileInfoA, err := os.Stat(fileName)
+	if err != nil {
+		return "", false, err
 	}
 
 	cmd := exec.Command(getUserEditorCommand(), fileName)
@@ -23,15 +28,22 @@ func Edit(content string) (string, error) {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		return "", err
+		return "", false, err
 	}
 
 	fileContent, err := os.ReadFile(fileName)
 	if err != nil {
-		return "", err
+		return "", false, err
 	}
 
-	return string(fileContent), nil
+	fileInfoB, err := os.Stat(fileName)
+	if err != nil {
+		return "", false, err
+	}
+
+	changed := fileInfoA.ModTime().String() != fileInfoB.ModTime().String()
+
+	return string(fileContent), changed, nil
 }
 
 func EditFile(filePath string) error {
