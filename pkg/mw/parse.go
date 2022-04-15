@@ -31,7 +31,9 @@ func parseEditResponse(decodedJson *editResponse, response *http.Response) (*Edi
 
 func parseGetPageResponse(pageName string) func(*getPageResponse, *http.Response) (*Page, error) {
 	return func(decodedJson *getPageResponse, response *http.Response) (*Page, error) {
-		return &Page{pageName, decodedJson.Parse.Wikitext}, nil
+		exists := decodedJson.Error.Code != "missingtitle"
+
+		return &Page{pageName, decodedJson.Parse.Wikitext, exists}, nil
 	}
 }
 

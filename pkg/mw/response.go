@@ -24,6 +24,9 @@ type getPageResponse struct {
 	Parse struct {
 		Wikitext string `json:"wikitext"`
 	} `json:"parse"`
+	Error struct {
+		Code string `json:"code"`
+	} `json:"error"`
 }
 
 type getAllPagesResponse struct {

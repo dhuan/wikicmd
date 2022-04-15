@@ -46,6 +46,7 @@ type EditResult struct {
 type Page struct {
 	Name    string
 	Content string
+	Exists  bool
 }
 
 type Image struct {
@@ -180,7 +181,7 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 			return []Page{}, continuation, true, err
 		}
 
-		pages = append(pages, Page{page.Title, fetchedPage.Content})
+		pages = append(pages, Page{page.Title, fetchedPage.Content, true})
 	}
 
 	finished := response.QueryContinue.AllPages.ApContinue == ""

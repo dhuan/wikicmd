@@ -23,22 +23,32 @@ var editCmd = &cobra.Command{
 			fmt.Println(err)
 			panic("Failed to get page.")
 		}
-		fmt.Println(fmt.Sprintf("Page content: %s", page.Content))
 
-		newContent, err := editor.Edit(page.Content)
+		newContent, changed, err := editor.Edit(page.Content)
 		if err != nil {
 			panic("Failed to edit.")
 		}
-		fmt.Println(fmt.Sprintf("New content: %s", newContent))
 
-		_, err = mw.Edit(
-			wikiConfig,
-			apiCredentials,
-			pageName,
-			newContent,
-		)
-		if err != nil {
-			panic("Failed to edit.")
+		if changed {
+			_, err = mw.Edit(
+				wikiConfig,
+				apiCredentials,
+				pageName,
+				newContent,
+			)
+			if err != nil {
+				panic("Failed to edit.")
+			}
+
+			if page.Exists {
+				fmt.Println(fmt.Sprintf("%s edited successfully.", page.Name))
+			} else {
+				fmt.Println(fmt.Sprintf("%s created successfully.", page.Name))
+			}
+
+			return
 		}
+
+		fmt.Println("No changes were made.")
 	},
 }
