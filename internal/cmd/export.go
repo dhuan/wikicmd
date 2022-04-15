@@ -22,12 +22,12 @@ var exportCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		wikiConfig, apiCredentials := beforeCommand()
+		wikiConfig, apiCredentials, hook := beforeCommand()
 		exportTo := args[0]
 
 		exportCount := 0
 		if flagExportType == export_type_all || flagExportType == export_type_page {
-			exportCount, err = runExport(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
+			exportCount, err = runExport(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0, hook)
 			if err != nil {
 				panic(err)
 			}
@@ -35,7 +35,7 @@ var exportCmd = &cobra.Command{
 
 		exportImagesCount := 0
 		if flagExportType == export_type_all || flagExportType == export_type_image {
-			exportImagesCount, err = runExportImages(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0)
+			exportImagesCount, err = runExportImages(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0, hook)
 			if err != nil {
 				panic(err)
 			}
@@ -45,8 +45,15 @@ var exportCmd = &cobra.Command{
 	},
 }
 
-func runExportImages(config *mw.Config, apiCredentials *mw.ApiCredentials, exportTo string, continuation string, exportCount int) (int, error) {
-	images, nextContinuation, finished, err := mw.GetAllImages(config, apiCredentials, continuation)
+func runExportImages(
+	config *mw.Config,
+	apiCredentials *mw.ApiCredentials,
+	exportTo string,
+	continuation string,
+	exportCount int,
+	hook *mw.HookOptions,
+) (int, error) {
+	images, nextContinuation, finished, err := mw.GetAllImages(config, apiCredentials, continuation, hook)
 	exportCount = exportCount + len(images)
 	if err != nil {
 		return 0, err
@@ -70,11 +77,18 @@ func runExportImages(config *mw.Config, apiCredentials *mw.ApiCredentials, expor
 
 	images = make([]mw.Image, 0, 0)
 	fmt.Println("Fetching next batch.")
-	return runExportImages(config, apiCredentials, exportTo, nextContinuation, exportCount)
+	return runExportImages(config, apiCredentials, exportTo, nextContinuation, exportCount, hook)
 }
 
-func runExport(config *mw.Config, apiCredentials *mw.ApiCredentials, exportTo string, continuation string, exportCount int) (int, error) {
-	pages, nextContinuation, finished, err := mw.GetAllPages(config, apiCredentials, continuation)
+func runExport(
+	config *mw.Config,
+	apiCredentials *mw.ApiCredentials,
+	exportTo string,
+	continuation string,
+	exportCount int,
+	hook *mw.HookOptions,
+) (int, error) {
+	pages, nextContinuation, finished, err := mw.GetAllPages(config, apiCredentials, continuation, hook)
 	exportCount = exportCount + len(pages)
 	if err != nil {
 		return 0, err
@@ -98,7 +112,7 @@ func runExport(config *mw.Config, apiCredentials *mw.ApiCredentials, exportTo st
 
 	pages = make([]mw.Page, 0, 0)
 	fmt.Println("Fetching next batch.")
-	return runExport(config, apiCredentials, exportTo, nextContinuation, exportCount)
+	return runExport(config, apiCredentials, exportTo, nextContinuation, exportCount, hook)
 }
 
 func validateExportTypeFlag(exportType string) bool {

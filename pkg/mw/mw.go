@@ -63,26 +63,30 @@ type ApiCredentials struct {
 	LoginResult *LoginResult
 }
 
+type HookOptions struct {
+	BeforeRequest func(string)
+}
+
 var MAP_MW_ERROR_WARNING = map[UploadWarning]string{
 	UPLOAD_WARNING_SAME_FILE_NO_CHANGE: "fileexists-no-change",
 }
 
 var FIRST_RUN = ""
 
-func GetApiCredentials(config *Config) (*ApiCredentials, error) {
-	loginTokenSet, err := getLoginToken(config)
+func GetApiCredentials(config *Config, hook *HookOptions) (*ApiCredentials, error) {
+	loginTokenSet, err := getLoginToken(config, hook)
 	if err != nil {
 		return &ApiCredentials{}, errors.New("Failed to get login token.")
 	}
 	fmt.Println(fmt.Sprintf("Got Login Token Set\nCookie: %s\nToken:%s", loginTokenSet.Cookie, loginTokenSet.Token))
 
-	loginResult, err := login(config, loginTokenSet)
+	loginResult, err := login(config, loginTokenSet, hook)
 	if err != nil {
 		return &ApiCredentials{}, err
 	}
 	fmt.Println(fmt.Sprintf("Got Login Result Set\nCookie: %s", loginResult.Cookie))
 
-	csrfToken, err := getCsrfToken(config, loginTokenSet, loginResult)
+	csrfToken, err := getCsrfToken(config, loginTokenSet, loginResult, hook)
 	if err != nil {
 		return &ApiCredentials{}, errors.New("Failed to get csrf token.")
 	}
@@ -91,7 +95,7 @@ func GetApiCredentials(config *Config) (*ApiCredentials, error) {
 	return &ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, nil
 }
 
-func Edit(config *Config, credentials *ApiCredentials, title string, content string) (*EditResult, error) {
+func Edit(config *Config, credentials *ApiCredentials, title string, content string, hook *HookOptions) (*EditResult, error) {
 	return requestWrapper[editResponse, EditResult](
 		fmt.Sprintf("%s/api.php", config.BaseAddress),
 		"POST",
@@ -110,10 +114,11 @@ func Edit(config *Config, credentials *ApiCredentials, title string, content str
 		map[string]string{
 			"Cookie": credentials.LoginResult.Cookie,
 		},
+		hook,
 	)
 }
 
-func GetAllImages(config *Config, credentials *ApiCredentials, continuation string) ([]Image, string, bool, error) {
+func GetAllImages(config *Config, credentials *ApiCredentials, continuation string, hook *HookOptions) ([]Image, string, bool, error) {
 	images := make([]Image, 0)
 	requestUrl := fmt.Sprintf("%s/api.php?action=query&format=json&list=allimages&ailimit=5", config.BaseAddress)
 
@@ -131,6 +136,7 @@ func GetAllImages(config *Config, credentials *ApiCredentials, continuation stri
 			return decodedJson, nil
 		},
 		map[string]string{},
+		hook,
 	)
 	if err != nil {
 		return []Image{}, continuation, true, err
@@ -151,7 +157,7 @@ func GetAllImages(config *Config, credentials *ApiCredentials, continuation stri
 	return images, continuationNew, finished, nil
 }
 
-func GetAllPages(config *Config, credentials *ApiCredentials, continuation string) ([]Page, string, bool, error) {
+func GetAllPages(config *Config, credentials *ApiCredentials, continuation string, hook *HookOptions) ([]Page, string, bool, error) {
 	requestUrl := fmt.Sprintf("%s/api.php?action=query&format=json&list=allpages&rawcontinue=1&aplimit=5", config.BaseAddress)
 
 	if continuation != FIRST_RUN {
@@ -168,6 +174,7 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 			return decodedJson, nil
 		},
 		map[string]string{},
+		hook,
 	)
 	if err != nil {
 		return []Page{}, continuation, true, err
@@ -175,7 +182,7 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 
 	pages := make([]Page, 0)
 	for _, page := range response.Query.AllPages {
-		fetchedPage, err := GetPage(config, credentials, utils.FormatPageNameInput(page.Title))
+		fetchedPage, err := GetPage(config, credentials, utils.FormatPageNameInput(page.Title), hook)
 
 		if err != nil {
 			return []Page{}, continuation, true, err
@@ -190,7 +197,7 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 	return pages, continuationNew, finished, nil
 }
 
-func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, error) {
+func GetPage(config *Config, credentials *ApiCredentials, title string, hook *HookOptions) (*Page, error) {
 	return requestWrapper[getPageResponse, Page](
 		fmt.Sprintf("%s/api.php?action=parse&format=json&page=%s&prop=wikitext&formatversion=2", config.BaseAddress, title),
 		"GET",
@@ -199,6 +206,7 @@ func GetPage(config *Config, credentials *ApiCredentials, title string) (*Page, 
 		&Page{},
 		parseGetPageResponse(title),
 		map[string]string{},
+		hook,
 	)
 }
 

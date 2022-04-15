@@ -16,7 +16,7 @@ var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import pages and images",
 	Run: func(cmd *cobra.Command, filePaths []string) {
-		wikiConfig, apiCredentials := beforeCommand()
+		wikiConfig, apiCredentials, hook := beforeCommand()
 
 		fileValidationErrors := utils.ValidateFiles(filePaths, allowedExtensionsToBeImported)
 		if len(fileValidationErrors) > 0 {
@@ -25,13 +25,18 @@ var importCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		uploadedCount := runImport(wikiConfig, apiCredentials, filePaths)
+		uploadedCount := runImport(wikiConfig, apiCredentials, filePaths, hook)
 
 		fmt.Println(fmt.Sprintf("%d item(s) have been imported.\nDone!", uploadedCount))
 	},
 }
 
-func runImport(wikiConfig *mw.Config, apiCredentials *mw.ApiCredentials, filePaths []string) int {
+func runImport(
+	wikiConfig *mw.Config,
+	apiCredentials *mw.ApiCredentials,
+	filePaths []string,
+	hook *mw.HookOptions,
+) int {
 	uploadedCount := 0
 	for _, filePath := range filePaths {
 		fmt.Println(fmt.Sprintf("Importing %s", filePath))
@@ -47,7 +52,7 @@ func runImport(wikiConfig *mw.Config, apiCredentials *mw.ApiCredentials, filePat
 		}
 
 		if fileIsPage(filePath) {
-			if err = importPage(wikiConfig, apiCredentials, filePath, fileContent); err != nil {
+			if err = importPage(wikiConfig, apiCredentials, filePath, fileContent, hook); err != nil {
 				panic(err)
 			}
 
@@ -106,6 +111,7 @@ func importPage(
 	apiCredentials *mw.ApiCredentials,
 	filePath string,
 	fileContent []byte,
+	hook *mw.HookOptions,
 ) error {
 	pageName := utils.FilePathToPageName(filePath)
 	_, err := mw.Edit(
@@ -113,6 +119,7 @@ func importPage(
 		apiCredentials,
 		pageName,
 		string(fileContent),
+		hook,
 	)
 	if err != nil {
 		return err
