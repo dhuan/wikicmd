@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-func getLoginToken(config *Config) (*LoginTokenSet, error) {
+func getLoginToken(config *Config, hook *HookOptions) (*LoginTokenSet, error) {
 	return requestWrapper[loginTokenResponse, LoginTokenSet](
 		fmt.Sprintf("%s/api.php?action=query&format=json&meta=tokens&type=login", config.BaseAddress),
 		"GET",
@@ -14,10 +14,11 @@ func getLoginToken(config *Config) (*LoginTokenSet, error) {
 		&LoginTokenSet{},
 		parseGetApiCredentials,
 		map[string]string{},
+		hook,
 	)
 }
 
-func login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
+func login(config *Config, loginTokenSet *LoginTokenSet, hook *HookOptions) (*LoginResult, error) {
 	return requestWrapper[loginResponse, LoginResult](
 		fmt.Sprintf("%s/api.php", config.BaseAddress),
 		"POST",
@@ -34,10 +35,11 @@ func login(config *Config, loginTokenSet *LoginTokenSet) (*LoginResult, error) {
 		map[string]string{
 			"Cookie": loginTokenSet.Cookie,
 		},
+		hook,
 	)
 }
 
-func getCsrfToken(config *Config, loginTokenSet *LoginTokenSet, loginResult *LoginResult) (*CsrfToken, error) {
+func getCsrfToken(config *Config, loginTokenSet *LoginTokenSet, loginResult *LoginResult, hook *HookOptions) (*CsrfToken, error) {
 	return requestWrapper[csrfTokenResponse, CsrfToken](
 		fmt.Sprintf("%s/api.php?action=query&format=json&meta=tokens", config.BaseAddress),
 		"GET",
@@ -48,5 +50,6 @@ func getCsrfToken(config *Config, loginTokenSet *LoginTokenSet, loginResult *Log
 		map[string]string{
 			"Cookie": loginResult.Cookie,
 		},
+		hook,
 	)
 }

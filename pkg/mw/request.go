@@ -2,6 +2,7 @@ package mw
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -14,8 +15,10 @@ func requestWrapper[D interface{}, T interface{}](
 	postData url.Values,
 	obj *D,
 	result *T,
-	parse func(obj *D, response *http.Response,
-	) (*T, error), headers map[string]string) (*T, error) {
+	parse func(obj *D, response *http.Response) (*T, error),
+	headers map[string]string,
+	hook *HookOptions,
+) (*T, error) {
 	var response *http.Response
 	var err error
 
@@ -33,6 +36,8 @@ func requestWrapper[D interface{}, T interface{}](
 	for headerKey, headerValue := range headers {
 		req.Header.Set(headerKey, headerValue)
 	}
+
+	hook.BeforeRequest(fmt.Sprintf("%s %s", method, url))
 
 	response, err = client.Do(req)
 	if err != nil {

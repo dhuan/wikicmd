@@ -14,11 +14,15 @@ var editCmd = &cobra.Command{
 	Short: "Edit pages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		wikiConfig, apiCredentials := beforeCommand()
-
+		wikiConfig, apiCredentials, hookOptions := beforeCommand()
 		pageName := args[0]
 
-		page, err := mw.GetPage(wikiConfig, apiCredentials, utils.FormatPageNameInput(pageName))
+		page, err := mw.GetPage(
+			wikiConfig,
+			apiCredentials,
+			utils.FormatPageNameInput(pageName),
+			hookOptions,
+		)
 		if err != nil {
 			fmt.Println(err)
 			panic("Failed to get page.")
@@ -35,6 +39,7 @@ var editCmd = &cobra.Command{
 				apiCredentials,
 				pageName,
 				newContent,
+				hookOptions,
 			)
 			if err != nil {
 				panic("Failed to edit.")

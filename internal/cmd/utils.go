@@ -19,10 +19,19 @@ func handleErrorGettingApiCredentials(err error, user string, wikiAddress string
 	fmt.Println("Failed to get API Credentials.")
 }
 
-func beforeCommand() (*mw.Config, *mw.ApiCredentials) {
+func beforeCommand() (*mw.Config, *mw.ApiCredentials, *mw.HookOptions) {
 	config, err := config.Get()
 	if err != nil {
 		panic(err)
+	}
+
+	hookBeforeRequest := nilHook
+	if flagVerbose {
+		hookBeforeRequest = logHook("Requesting %s")
+	}
+
+	hook := &mw.HookOptions{
+		BeforeRequest: hookBeforeRequest,
 	}
 
 	wikiConfig := &mw.Config{
@@ -31,12 +40,21 @@ func beforeCommand() (*mw.Config, *mw.ApiCredentials) {
 		Password:    config.Password,
 	}
 
-	apiCredentials, err := mw.GetApiCredentials(wikiConfig)
+	apiCredentials, err := mw.GetApiCredentials(wikiConfig, hook)
 	if err != nil {
 		handleErrorGettingApiCredentials(err, config.User, config.Address)
 
 		os.Exit(1)
 	}
 
-	return wikiConfig, apiCredentials
+	return wikiConfig, apiCredentials, hook
+}
+
+func nilHook(logMessage string) {
+}
+
+func logHook(message string) func(string) {
+	return func(logMessage string) {
+		fmt.Println(fmt.Sprintf(message, logMessage))
+	}
 }
