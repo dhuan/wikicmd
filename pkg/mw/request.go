@@ -37,7 +37,7 @@ func requestWrapper[D interface{}, T interface{}](
 		req.Header.Set(headerKey, headerValue)
 	}
 
-	hook.BeforeRequest(fmt.Sprintf("%s %s", method, url))
+	hook.BeforeRequest(buildLogMessageBeforeRequest(method, url, postData))
 
 	response, err = client.Do(req)
 	if err != nil {
@@ -57,4 +57,25 @@ func requestWrapper[D interface{}, T interface{}](
 	}
 
 	return parse(obj, response)
+}
+
+func buildLogMessageBeforeRequest(method, url string, postData url.Values) string {
+	if len(postData) == 0 {
+		return fmt.Sprintf("%s %s", method, url)
+	}
+
+	return fmt.Sprintf("%s %s\n%s", method, url, urlValuesToString(postData))
+}
+
+func urlValuesToString(urlValues url.Values) string {
+	stringList := make([]string, len(urlValues))
+
+	i := 0
+	for key, values := range urlValues {
+		stringList[i] = fmt.Sprintf("* %s: %s", key, strings.Join(values, " "))
+
+		i++
+	}
+
+	return strings.Join(stringList, "\n")
 }
