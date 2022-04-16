@@ -64,7 +64,10 @@ type ApiCredentials struct {
 }
 
 type HookOptions struct {
-	BeforeRequest func(string)
+	BeforeRequest        func(string)
+	OnReceivedLoginToken func(map[string]string)
+	OnLogin              func(map[string]string)
+	OnCsrf               func(map[string]string)
 }
 
 var MAP_MW_ERROR_WARNING = map[UploadWarning]string{
@@ -78,19 +81,26 @@ func GetApiCredentials(config *Config, hook *HookOptions) (*ApiCredentials, erro
 	if err != nil {
 		return &ApiCredentials{}, errors.New("Failed to get login token.")
 	}
-	fmt.Println(fmt.Sprintf("Got Login Token Set\nCookie: %s\nToken:%s", loginTokenSet.Cookie, loginTokenSet.Token))
+	hook.OnReceivedLoginToken(map[string]string{
+		"cookie": loginTokenSet.Cookie,
+		"token":  loginTokenSet.Token,
+	})
 
 	loginResult, err := login(config, loginTokenSet, hook)
 	if err != nil {
 		return &ApiCredentials{}, err
 	}
-	fmt.Println(fmt.Sprintf("Got Login Result Set\nCookie: %s", loginResult.Cookie))
+	hook.OnLogin(map[string]string{
+		"cookie": loginResult.Cookie,
+	})
 
 	csrfToken, err := getCsrfToken(config, loginTokenSet, loginResult, hook)
 	if err != nil {
 		return &ApiCredentials{}, errors.New("Failed to get csrf token.")
 	}
-	fmt.Println(fmt.Sprintf("Got CSRF\nToken: %s", csrfToken.Token))
+	hook.OnCsrf(map[string]string{
+		"token": csrfToken.Token,
+	})
 
 	return &ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, nil
 }
