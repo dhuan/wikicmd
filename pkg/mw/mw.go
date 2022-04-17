@@ -115,7 +115,6 @@ func Edit(config *Config, credentials *ApiCredentials, title string, content str
 			"format":      {"jsonfm"},
 			"title":       {title},
 			"text":        {content},
-			"summary":     {"test summary"},
 			"wrappedhtml": {"1"},
 			"token":       {credentials.CsrfToken.Token},
 		},
