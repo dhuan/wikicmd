@@ -65,6 +65,7 @@ type ApiCredentials struct {
 
 type HookOptions struct {
 	BeforeRequest        func(string)
+	AfterRequest         func(map[string]string)
 	OnReceivedLoginToken func(map[string]string)
 	OnLogin              func(map[string]string)
 	OnCsrf               func(map[string]string)

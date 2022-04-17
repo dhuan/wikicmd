@@ -26,11 +26,13 @@ func beforeCommand() (*mw.Config, *mw.ApiCredentials, *mw.HookOptions) {
 	}
 
 	hookBeforeRequest := nilHook
+	hookAfterRequest := nilHookWithParams
 	hookOnReceivedLoginToken := nilHookWithParams
 	hookOnLogin := nilHookWithParams
 	hookOnCsrf := nilHookWithParams
 	if flagVerbose {
 		hookBeforeRequest = logHook("Requesting %s")
+		hookAfterRequest = logWithParamsHook("Request finished.\n* %s", []string{"responseBody"})
 		hookOnReceivedLoginToken = logWithParamsHook("Got login token set.\n* Cookie: %s\n* Token %s", []string{"cookie", "token"})
 		hookOnLogin = logWithParamsHook("Got Login Result Set\n* Cookie: %s", []string{"cookie"})
 		hookOnCsrf = logWithParamsHook("Got CSRF Token: %s", []string{"token"})
@@ -38,6 +40,7 @@ func beforeCommand() (*mw.Config, *mw.ApiCredentials, *mw.HookOptions) {
 
 	hook := &mw.HookOptions{
 		BeforeRequest:        hookBeforeRequest,
+		AfterRequest:         hookAfterRequest,
 		OnReceivedLoginToken: hookOnReceivedLoginToken,
 		OnLogin:              hookOnLogin,
 		OnCsrf:               hookOnCsrf,
