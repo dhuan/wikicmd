@@ -55,6 +55,9 @@ func requestWrapper[D interface{}, T interface{}](
 	if err != nil {
 		return result, err
 	}
+	hook.AfterRequest(map[string]string{
+		"responseBody": string(bodyBytes),
+	})
 
 	return parse(obj, response)
 }
