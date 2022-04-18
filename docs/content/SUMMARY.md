@@ -4,7 +4,7 @@
 
 # User Guide
 
-- [Installation](./installation.md)
+- [Installing](./install.md)
 - [Configuring](./config.md)
 - [Troubleshooting](./troubleshooting.md)
 

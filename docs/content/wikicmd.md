@@ -21,6 +21,7 @@ $ wget
 
 - [Downloads](https://github.com/dhuan/wikicmd)
 - [Source code](https://github.com/dhuan/wikicmd)
+- [User Guide](https://github.com/dhuan/wikicmd)
 - [Report Bugs](https://github.com/dhuan/wikicmd)
 
 ## License

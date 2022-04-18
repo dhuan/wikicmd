@@ -1,3 +1,0 @@
-# Installation
-
-## Installing from source
