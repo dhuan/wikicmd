@@ -1,5 +1,7 @@
 # Summary
 
+- [wikicmd](./wikicmd.md)
+
 # User Guide
 
 - [Installation](./installation.md)

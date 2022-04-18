@@ -1,1 +1,3 @@
-# Configuring
+# Installation
+
+## Installing from source

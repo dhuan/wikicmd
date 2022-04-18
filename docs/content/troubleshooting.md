@@ -5,3 +5,12 @@ If you're facing issues, it may help to use the verbose flag `-v`. It will outpu
 ```sh
 $ wikicmd -v edit 'Some page'
 ```
+
+# F.A.Q
+
+## I don't like the editor that opens up when I use wikicmd's `edit`. How do I use editor X?
+
+```sh
+$ export EDITOR=vscode
+$ wikicmd edit 'Some page'
+```
