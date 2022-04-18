@@ -13,9 +13,8 @@ Check the Command Reference section on the menu to know all the possible operati
 
 For installation instructions, see [Installation](installation.md). If you just want to quickly download the latest version:
 
-```sh
-$ wget
-```
+- [Download for Linux](https://github.com/dhuan/wikicmd/releases/download/v0.1.0/wikicmd_v0.1.0_linux-386.zip)
+- [Download for MacOS](https://github.com/dhuan/wikicmd/releases/download/v0.1.0/wikicmd_v0.1.0_linux-386.zip)
 
 ## Useful Links
 
