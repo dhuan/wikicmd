@@ -15,7 +15,8 @@ type Config struct {
 }
 
 type ConfigRoot struct {
-	Config []Config `json:"config"`
+	Config  []Config `json:"config"`
+	Default string   `json:"default"`
 }
 
 func GetConfigFilePath() (string, bool, error) {
@@ -33,32 +34,70 @@ func GetConfigFilePath() (string, bool, error) {
 	return configFileName, true, nil
 }
 
-func Get() (Config, error) {
+func Get() (*Config, error) {
+	configRoot, err := getConfig()
+
+	if err != nil {
+		return &Config{}, err
+	}
+
+	return resolveDefaultConfig(configRoot)
+}
+
+func Set(configRoot *ConfigRoot) error {
+	configFilePath, _, err := GetConfigFilePath()
+	if err != nil {
+		return err
+	}
+
+	fileContent, err := json.MarshalIndent(configRoot, "", "\t")
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(configFilePath, fileContent, 0644)
+}
+
+func resolveDefaultConfig(configRoot *ConfigRoot) (*Config, error) {
+	for _, config := range configRoot.Config {
+		if configRoot.Default == config.Id {
+			return &config, nil
+		}
+	}
+
+	if len(configRoot.Config) == 0 {
+		return &Config{}, errors.New("No configs found.")
+	}
+
+	return &configRoot.Config[0], nil
+}
+
+func getConfig() (*ConfigRoot, error) {
 	configFilePath, configFileExists, err := GetConfigFilePath()
 	if err != nil {
-		return Config{}, err
+		return &ConfigRoot{}, err
 	}
 
 	if !configFileExists {
-		return Config{}, errors.New("Config file not found.")
+		return &ConfigRoot{}, errors.New("Config file not found.")
 	}
 
 	fileContent, err := os.ReadFile(configFilePath)
 	if err != nil {
-		return Config{}, err
+		return &ConfigRoot{}, err
 	}
 
 	decodedJson := &ConfigRoot{}
 
 	if err = json.Unmarshal(fileContent, decodedJson); err != nil {
-		return Config{}, err
+		return &ConfigRoot{}, err
 	}
 
-	if len(decodedJson.Config) == 0 {
-		return Config{}, errors.New("No configs found.")
-	}
+	return decodedJson, nil
+}
 
-	return decodedJson.Config[0], nil
+func GetAll() (*ConfigRoot, error) {
+	return getConfig()
 }
 
 func fileExists(filePath string) bool {
