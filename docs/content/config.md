@@ -35,11 +35,32 @@ The `config` field takes a list of "Wiki Configuration Objects". In the example 
 
 ## Configuration Parameters
 
-**id**: An ID to identify a Wiki with.
+### id
 
-**address**: A Wiki URL. For example `https://wikipedia.org`.
+An ID to identify a Wiki with.
 
-**user**: A username that you can login with.
+### address
 
-**password**: Your password.
+A Wiki URL. For example `https://wikipedia.org`.
 
+### user
+
+A username that you can login with.
+
+### password
+
+Your password.
+
+### importExtensions (optional)
+
+A list of file extensions that can be be imported.
+
+MediaWiki by default allows only a set o file types to be uploaded. However there are extensions that enhance MediaWiki to allow other kinds of files. If you customised your wiki to enable uploading other types of files, you can use this configuration parameter to enable wikicmd to import these files.
+
+```
+"importExtensions": [
+  "mp4",
+  "avi",
+  "wmv"
+]
+```
