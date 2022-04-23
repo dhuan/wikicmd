@@ -8,10 +8,11 @@ import (
 )
 
 type Config struct {
-	Id       string `json:"id"`
-	Address  string `json:"address"`
-	User     string `json:"user"`
-	Password string `json:"password"`
+	Id               string   `json:"id"`
+	Address          string   `json:"address"`
+	User             string   `json:"user"`
+	Password         string   `json:"password"`
+	ImportExtensions []string `json:"importExtensions"`
 }
 
 type ConfigRoot struct {
@@ -108,4 +109,12 @@ func fileExists(filePath string) bool {
 	}
 
 	return true
+}
+
+func ImportExtensionsPage() []string {
+	return pageExtensions
+}
+
+func ImportExtensionsMedia(config *Config) []string {
+	return append(imageExtensions, config.ImportExtensions...)
 }
