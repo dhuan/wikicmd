@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/dhuan/wikicmd/internal/config"
 	"github.com/dhuan/wikicmd/internal/utils"
 	"github.com/dhuan/wikicmd/pkg/mw"
 	"github.com/spf13/cobra"
@@ -17,21 +18,30 @@ var importCmd = &cobra.Command{
 	Short: "Import pages and images",
 	Run: func(cmd *cobra.Command, filePaths []string) {
 		wikiConfig, apiCredentials, hook := beforeCommand()
+		userConfig, err := config.Get()
+		if err != nil {
+			panic(err)
+		}
 
-		fileValidationErrors := utils.ValidateFiles(filePaths, allowedExtensionsToBeImported)
+		allAllowedExtensions := append(
+			config.ImportExtensionsPage(),
+			config.ImportExtensionsMedia(userConfig)...,
+		)
+		fileValidationErrors := utils.ValidateFiles(filePaths, allAllowedExtensions)
 		if len(fileValidationErrors) > 0 {
 			handleFileValidationErrors(fileValidationErrors)
 
 			os.Exit(1)
 		}
 
-		uploadedCount := runImport(wikiConfig, apiCredentials, filePaths, hook)
+		uploadedCount := runImport(userConfig, wikiConfig, apiCredentials, filePaths, hook)
 
 		fmt.Println(fmt.Sprintf("%d item(s) have been imported.\nDone!", uploadedCount))
 	},
 }
 
 func runImport(
+	userConfig *config.Config,
 	wikiConfig *mw.Config,
 	apiCredentials *mw.ApiCredentials,
 	filePaths []string,
@@ -61,7 +71,7 @@ func runImport(
 			continue
 		}
 
-		if fileIsImage(filePath) {
+		if fileIsImage(userConfig, filePath) {
 			uploadWarnings, uploaded, err := importImage(wikiConfig, apiCredentials, filePath, file)
 			if err != nil {
 				panic(err)
@@ -83,11 +93,11 @@ func runImport(
 }
 
 func fileIsPage(filePath string) bool {
-	return utils.ExtensionMatches(pageExtensions, filePath)
+	return utils.ExtensionMatches(config.ImportExtensionsPage(), filePath)
 }
 
-func fileIsImage(filePath string) bool {
-	return utils.ExtensionMatches(imageExtensions, filePath)
+func fileIsImage(userConfig *config.Config, filePath string) bool {
+	return utils.ExtensionMatches(config.ImportExtensionsMedia(userConfig), filePath)
 }
 
 func importImage(
