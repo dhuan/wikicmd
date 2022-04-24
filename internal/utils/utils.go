@@ -131,3 +131,37 @@ func AnyEquals[T comparable](list []T, value T) bool {
 
 	return false
 }
+
+func StringToBool(str string) bool {
+	if strings.ToLower(str) == "true" {
+		return true
+	}
+
+	return false
+}
+
+func BoolToString(value bool) string {
+	if value {
+		return "true"
+	}
+
+	return "false"
+}
+
+func RemoveNth[T interface{}](list []T, iToRemove int) []T {
+	if iToRemove > (len(list) - 1) {
+		return list
+	}
+
+	newList := make([]T, 0)
+
+	for i, value := range list {
+		if i == iToRemove {
+			continue
+		}
+
+		newList = append(newList, value)
+	}
+
+	return newList
+}

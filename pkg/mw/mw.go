@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"strings"
 
 	"github.com/dhuan/wikicmd/internal/utils"
 )
@@ -17,6 +18,12 @@ type Config struct {
 	BaseAddress string
 	Login       string
 	Password    string
+}
+
+type StateGetAllPages struct {
+	FirstRun   bool
+	Namespaces []string
+	ApContinue string
 }
 
 type UploadWarning int
@@ -167,11 +174,56 @@ func GetAllImages(config *Config, credentials *ApiCredentials, continuation stri
 	return images, continuationNew, finished, nil
 }
 
-func GetAllPages(config *Config, credentials *ApiCredentials, continuation string, hook *HookOptions) ([]Page, string, bool, error) {
+func parseStateGetAllPages(stateSerialized map[string]string) (*StateGetAllPages, error) {
+	firstRun, ok := stateSerialized["firstRun"]
+	if !ok {
+		return &StateGetAllPages{}, errors.New(fmt.Sprintf("Field %s missing from serialized state.", "firstRun"))
+	}
+
+	namespaces, ok := stateSerialized["namespaces"]
+	if !ok {
+		return &StateGetAllPages{}, errors.New(fmt.Sprintf("Field %s missing from serialized state.", "namespaces"))
+	}
+
+	apContinue, ok := stateSerialized["apContinue"]
+	if !ok {
+		return &StateGetAllPages{}, errors.New(fmt.Sprintf("Field %s missing from serialized state.", "apContinue"))
+	}
+
+	firstRunParsed := utils.StringToBool(firstRun)
+	namespacesParsed := strings.Split(namespaces, ",")
+
+	return &StateGetAllPages{firstRunParsed, namespacesParsed, apContinue}, nil
+}
+
+var (
+	namespace_main     = "0"
+	namespace_template = "10"
+)
+
+func NewStateForGetAllPages() map[string]string {
+	return serializeStateForGetAllPages(&StateGetAllPages{
+		FirstRun:   true,
+		Namespaces: []string{namespace_main, namespace_template},
+		ApContinue: "",
+	})
+}
+
+func GetAllPages(
+	config *Config,
+	credentials *ApiCredentials,
+	stateSerialized map[string]string,
+	hook *HookOptions) ([]Page, map[string]string, bool, error) {
 	requestUrl := fmt.Sprintf("%s/api.php?action=query&format=json&list=allpages&rawcontinue=1&aplimit=5", config.BaseAddress)
 
-	if continuation != FIRST_RUN {
-		requestUrl = fmt.Sprintf("%s&apcontinue=%s", requestUrl, continuation)
+	state, err := parseStateGetAllPages(stateSerialized)
+	if err != nil {
+		return []Page{}, map[string]string{}, true, err
+	}
+
+	apNamespace := state.Namespaces[0]
+	if !state.FirstRun {
+		requestUrl = fmt.Sprintf("%s&apcontinue=%s&apnamespace=%s", requestUrl, state.ApContinue, apNamespace)
 	}
 
 	response, err := requestWrapper[getAllPagesResponse, getAllPagesResponse](
@@ -187,7 +239,7 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 		hook,
 	)
 	if err != nil {
-		return []Page{}, continuation, true, err
+		return []Page{}, stateSerialized, true, err
 	}
 
 	pages := make([]Page, 0)
@@ -195,16 +247,54 @@ func GetAllPages(config *Config, credentials *ApiCredentials, continuation strin
 		fetchedPage, err := GetPage(config, credentials, utils.FormatPageNameInput(page.Title), hook)
 
 		if err != nil {
-			return []Page{}, continuation, true, err
+			return []Page{}, stateSerialized, true, err
 		}
 
 		pages = append(pages, Page{page.Title, fetchedPage.Content, true})
 	}
 
-	finished := response.QueryContinue.AllPages.ApContinue == ""
-	continuationNew := response.QueryContinue.AllPages.ApContinue
+	finished, newState, err := getNewStateForGetAllPages(response, state)
+	if err != nil {
+		return []Page{}, stateSerialized, true, err
+	}
 
-	return pages, continuationNew, finished, nil
+	return pages, serializeStateForGetAllPages(newState), finished, nil
+}
+
+func serializeStateForGetAllPages(state *StateGetAllPages) map[string]string {
+	return map[string]string{
+		"firstRun":   utils.BoolToString(state.FirstRun),
+		"namespaces": strings.Join(state.Namespaces, ","),
+		"apContinue": state.ApContinue,
+	}
+}
+
+func getNewStateForGetAllPages(response *getAllPagesResponse, state *StateGetAllPages) (bool, *StateGetAllPages, error) {
+	apContinue := response.QueryContinue.AllPages.ApContinue
+	finishedCurrent := apContinue == ""
+	finishedAll := finishedCurrent && len(state.Namespaces) == 1
+
+	if finishedAll {
+		return true, &StateGetAllPages{
+			FirstRun:   false,
+			Namespaces: []string{},
+			ApContinue: "",
+		}, nil
+	}
+
+	if !finishedCurrent {
+		return false, &StateGetAllPages{
+			FirstRun:   false,
+			Namespaces: state.Namespaces,
+			ApContinue: apContinue,
+		}, nil
+	}
+
+	return false, &StateGetAllPages{
+		FirstRun:   false,
+		Namespaces: utils.RemoveNth[string](state.Namespaces, 0),
+		ApContinue: apContinue,
+	}, nil
 }
 
 func GetPage(config *Config, credentials *ApiCredentials, title string, hook *HookOptions) (*Page, error) {

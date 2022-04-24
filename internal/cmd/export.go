@@ -27,7 +27,7 @@ var exportCmd = &cobra.Command{
 
 		exportCount := 0
 		if flagExportType == export_type_all || flagExportType == export_type_page {
-			exportCount, err = runExport(wikiConfig, apiCredentials, exportTo, mw.FIRST_RUN, 0, hook)
+			exportCount, err = runExport(wikiConfig, apiCredentials, mw.NewStateForGetAllPages(), exportTo, 0, hook)
 			if err != nil {
 				panic(err)
 			}
@@ -83,12 +83,12 @@ func runExportImages(
 func runExport(
 	config *mw.Config,
 	apiCredentials *mw.ApiCredentials,
+	state map[string]string,
 	exportTo string,
-	continuation string,
 	exportCount int,
 	hook *mw.HookOptions,
 ) (int, error) {
-	pages, nextContinuation, finished, err := mw.GetAllPages(config, apiCredentials, continuation, hook)
+	pages, newState, finished, err := mw.GetAllPages(config, apiCredentials, state, hook)
 	exportCount = exportCount + len(pages)
 	if err != nil {
 		return 0, err
@@ -112,7 +112,7 @@ func runExport(
 
 	pages = make([]mw.Page, 0, 0)
 	fmt.Println("Fetching next batch.")
-	return runExport(config, apiCredentials, exportTo, nextContinuation, exportCount, hook)
+	return runExport(config, apiCredentials, newState, exportTo, exportCount, hook)
 }
 
 func validateExportTypeFlag(exportType string) bool {
