@@ -197,14 +197,16 @@ func parseStateGetAllPages(stateSerialized map[string]string) (*StateGetAllPages
 }
 
 var (
-	namespace_main     = "0"
-	namespace_template = "10"
+	namespace_main      = "0"
+	namespace_mediawiki = "8"
+	namespace_template  = "10"
+	namespace_category  = "14"
 )
 
 func NewStateForGetAllPages() map[string]string {
 	return serializeStateForGetAllPages(&StateGetAllPages{
 		FirstRun:   true,
-		Namespaces: []string{namespace_main, namespace_template},
+		Namespaces: []string{namespace_main, namespace_mediawiki, namespace_template, namespace_category},
 		ApContinue: "",
 	})
 }
