@@ -25,4 +25,4 @@ For installation instructions, see [Installation](installation.md). If you just 
 
 ## License
 
-wikicmd is licensed under GNU General Public License v3. See [License here](https://github.com/dhuan/wikicmd/blob/main/LICENSE) for more details.
+wikicmd is licensed under MIT. See [License here](https://github.com/dhuan/wikicmd/blob/main/LICENSE) for more details.
