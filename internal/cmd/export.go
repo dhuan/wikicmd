@@ -76,7 +76,7 @@ func runExportImages(
 	}
 
 	images = make([]mw.Image, 0, 0)
-	fmt.Println("Fetching next batch.")
+	fmt.Println("Fetching next batch!!!!!!!!!!!!!!!!!!!!!")
 	return runExportImages(config, apiCredentials, exportTo, nextContinuation, exportCount, hook)
 }
 
