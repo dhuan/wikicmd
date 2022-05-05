@@ -1,3 +1,5 @@
+set -ex
+
 WIKICMD_VERSION=$(echo $GITHUB_REF | cut -d '/' -f 3)
 
 export GH_TOKEN=${GH_KEY}
