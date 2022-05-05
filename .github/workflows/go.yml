@@ -29,10 +29,8 @@ jobs:
         fi
 
     - name: Build
-      run: go build -v ./...
+      run: make
 
     - name: Test
-      env:
-        GIBACK_TESTS_USE_DOCKER: true
       run: |
           make test
