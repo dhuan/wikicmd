@@ -1,0 +1,18 @@
+{
+  "config": [
+    {
+      "id": "my_wiki",
+      "address": "http://localhost:7000",
+      "user": "Admin@bot",
+      "password": "7ldic7kn2a44f39d4nf8bcdost4a13qf",
+      "importExtensions": []
+    },
+    {
+      "id": "another_wiki",
+      "address": "http://localhost:8000",
+      "user": "Admin@bot",
+      "password": "7ldic7kn2a44f39d4nf8bcdost4a13qf",
+      "importExtensions": []
+    }
+  ]
+}
