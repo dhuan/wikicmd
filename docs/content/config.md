@@ -1,6 +1,6 @@
 # Configuring
 
-wikicmd looks for `/home/myuser/.wikicmd.json` in order to read your configuration. You can either create this file by hand, or you can run the [config command](cmd_config.md) where a command-line wizard will help you to accomplish the same.
+wikicmd looks for `~/.wikicmd.json` in order to read your configuration. You can either create this file by hand, or you can run the [config command](cmd_config.md) where a command-line wizard will help you to accomplish the same.
 
 ```sh
 $ wikicmd config
@@ -13,6 +13,8 @@ Next, a configuration file will be created for you and saved as /home/myuser/.wi
 Is this OK? (yes):    
 Done!
 ```
+
+If you want your configuration file to be located in a place other than `~/.wikicmd.json`, you can set the `WIKICMD_CONFIG` shell environment variable, pointing to a place of your preference.
 
 ## Configuration Structure
 
