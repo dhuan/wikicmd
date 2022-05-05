@@ -1,10 +1,9 @@
 name: Go
 
-on:                                                                                                                                                           
-  push:                                                                                                                                                       
-    paths:                                                                                                                                                    
-      - '**.go'
-      - '**.sh'
+on:
+  push:
+    branches:
+      - *
 
 jobs:
 
