@@ -57,7 +57,7 @@ Your password.
 
 A list of file extensions that can be be imported.
 
-MediaWiki by default allows only a set o file types to be uploaded. However there are extensions that enhance MediaWiki to allow other kinds of files. If you customised your wiki to enable uploading other types of files, you can use this configuration parameter to enable wikicmd to import these files.
+MediaWiki by default allows only a set of file types to be uploaded. However there are extensions that enhance MediaWiki to allow other kinds of files. If you customised your wiki to enable uploading other types of files, you can use this configuration parameter to enable wikicmd to import these files.
 
 ```
 "importExtensions": [
