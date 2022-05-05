@@ -21,6 +21,12 @@ type ConfigRoot struct {
 }
 
 func GetConfigFilePath() (string, bool, error) {
+	customConfigPath := os.Getenv("WIKICMD_CONFIG")
+	hasCustomConfigPath := customConfigPath != ""
+	if hasCustomConfigPath {
+		return customConfigPath, fileExists(customConfigPath), nil
+	}
+
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", false, err
