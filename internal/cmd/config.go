@@ -75,12 +75,14 @@ func newConfigWizard(filePath string, requestingNew bool) (bool, error) {
 	newConfig := config.ConfigRoot{
 		Config: []config.Config{
 			config.Config{
-				Id:       "my_wiki",
-				Address:  inputWikiAddress,
-				User:     inputLogin,
-				Password: inputPassword,
+				Id:               "my_wiki",
+				Address:          inputWikiAddress,
+				User:             inputLogin,
+				Password:         inputPassword,
+				ImportExtensions: []string{},
 			},
 		},
+		Default: "my_wiki",
 	}
 
 	jsonEncoded, err := json.MarshalIndent(newConfig, "", "  ")
