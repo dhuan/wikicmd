@@ -28,9 +28,18 @@ func RunWikiCmd(state *TestState, command string) (string, error) {
 
 func StartupTest() *TestState {
 	return &TestState{
-		"/home/dev/github.com/dhuan/wikicmd/bin/wikicmd",
-		"/home/dev/github.com/dhuan/wikicmd/tests/e2e/wikicmd_config.json",
+		fmt.Sprintf("%s/bin/wikicmd", pwd()),
+		fmt.Sprintf("%s/tests/e2e/wikicmd_config.json", pwd()),
 	}
+}
+
+func pwd() string {
+	wd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	return fmt.Sprintf("%s/../..", wd)
 }
 
 func toCommandParameters(command string) []string {
