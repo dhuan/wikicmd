@@ -20,7 +20,12 @@ func handleErrorGettingApiCredentials(err error, user string, wikiAddress string
 }
 
 func beforeCommand() (*mw.Config, *mw.ApiCredentials, *mw.HookOptions) {
-	config, err := config.Get()
+	userConfig, err := config.Get()
+	if errors.Is(err, config.ErrConfigDoesNotExist) {
+		fmt.Println("You don't seem to have a configuration file. Try 'wikicmd config' to initialize a new configuration.")
+
+		os.Exit(1)
+	}
 	if err != nil {
 		panic(err)
 	}
@@ -47,14 +52,14 @@ func beforeCommand() (*mw.Config, *mw.ApiCredentials, *mw.HookOptions) {
 	}
 
 	wikiConfig := &mw.Config{
-		BaseAddress: config.Address,
-		Login:       config.User,
-		Password:    config.Password,
+		BaseAddress: userConfig.Address,
+		Login:       userConfig.User,
+		Password:    userConfig.Password,
 	}
 
 	apiCredentials, err := mw.GetApiCredentials(wikiConfig, hook)
 	if err != nil {
-		handleErrorGettingApiCredentials(err, config.User, config.Address)
+		handleErrorGettingApiCredentials(err, userConfig.User, userConfig.Address)
 
 		os.Exit(1)
 	}
