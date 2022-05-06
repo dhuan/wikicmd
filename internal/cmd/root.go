@@ -12,7 +12,7 @@ var (
 
 	rootCmd = &cobra.Command{
 		Use:   "wikicmd",
-		Short: "Utilities for managing your Wikimedia project.",
+		Short: "Utilities for managing your MediaWiki project.",
 	}
 )
 

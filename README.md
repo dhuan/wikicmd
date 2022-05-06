@@ -1,6 +1,6 @@
 # wikicmd
 
-wikicmd is a command-line utility for working with WikiMedia websites, such as the Wikipedia.
+wikicmd is a command-line utility for working with MediaWiki websites, such as the Wikipedia.
 
 ```sh
 $ wikicmd edit 'Some page'
