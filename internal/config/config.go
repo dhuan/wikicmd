@@ -86,7 +86,7 @@ func getConfig() (*ConfigRoot, error) {
 	}
 
 	if !configFileExists {
-		return &ConfigRoot{}, errors.New("Config file not found.")
+		return &ConfigRoot{}, ErrConfigDoesNotExist
 	}
 
 	fileContent, err := os.ReadFile(configFilePath)
