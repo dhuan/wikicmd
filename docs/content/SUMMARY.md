@@ -6,6 +6,7 @@
 
 - [Installing](./install.md)
 - [Configuring](./config.md)
+- [Get your Wiki Credentials](./credentials.md)
 - [Troubleshooting](./troubleshooting.md)
 
 # Command Reference
