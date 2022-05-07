@@ -4,7 +4,7 @@ wikicmd looks for `~/.wikicmd.json` in order to read your configuration. You can
 
 ```sh
 $ wikicmd config
-Wiki address: (https://wikipedia.org) 
+Wiki address: (https://en.wikipedia.org/w)
 Login: myuser
 Password: mypassword
 
@@ -25,7 +25,7 @@ A configuration file is formatted as follows:
   "config": [
     {
       "id": "my_wiki",
-      "address": "https://wikipedia.org",
+      "address": "https://en.wikipedia.org/w",
       "user": "myuser",
       "password": "mypassword"
     }
@@ -43,7 +43,7 @@ An ID to identify a Wiki with.
 
 ### address
 
-A Wiki URL. For example `https://wikipedia.org`.
+A Wiki URL. For example `https://en.wikipedia.org/w`.
 
 ### user
 
