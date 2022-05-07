@@ -14,7 +14,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit pages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		wikiConfig, apiCredentials, hookOptions := beforeCommand()
+		wikiConfig, apiCredentials, hookOptions := beforeCommand(true)
 		pageName := args[0]
 
 		page, err := mw.GetPage(
