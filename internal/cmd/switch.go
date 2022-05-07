@@ -14,6 +14,8 @@ var switchCmd = &cobra.Command{
 	Short: "Switch between your available Wikis.",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		beforeCommand(false)
+
 		configRoot, err := config.GetAll()
 		if err != nil {
 			panic(err)
