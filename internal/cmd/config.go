@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var defaultWiki = "https://wikipedia.org"
+var defaultWiki = "https://en.wikipedia.org/w"
 
 var configCmd = &cobra.Command{
 	Use:   "config",
