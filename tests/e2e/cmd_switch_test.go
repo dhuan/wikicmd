@@ -20,3 +20,17 @@ The available Wikis you can switch to are: my_wiki,another_wiki
 `,
 	)
 }
+
+func TestSwitchingToAnotherWiki(t *testing.T) {
+	testState := testutils.StartupTest()
+	commandResult, _ := testutils.RunWikiCmd(testState, "switch another_wiki")
+
+	assert.Equal(
+		t,
+		commandResult,
+		`Done!
+`,
+	)
+
+	testutils.AssertConfig(t, testState, testutils.Config_field_default, "another_wiki")
+}
