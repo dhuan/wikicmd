@@ -1,0 +1,35 @@
+name: Publish Docs
+
+on:                                                                                                                                                           
+  push:                                                                                                                                                       
+    branches:
+      - master
+      - ci_docs
+    paths:                                                                                                                                                    
+      - '**.md'
+      - '.github/workflows/docs.yml'
+
+jobs:
+  publish_docs:
+    name: Publish Docs
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Build documentation
+      run: |
+          make docs_build
+          mkdir docs_html
+          mv docs.tgz ./docs_html
+          cd ./docs_html
+          tar xzvf ./docs.tgz
+          rm ./docs.tgz
+          cd ..
+
+    - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs_html
