@@ -5,8 +5,8 @@
 This is the easiest installation method.
 
 ```sh
-$ wget https://github.com/dhuan/wikicmd/releases/download/v0.1.0-beta-5/wikicmd_v0.1.0-beta-5_linux-386.zip
-$ unzip wikicmd_v0.1.0-beta-5_linux-386.zip
+$ wget https://github.com/dhuan/wikicmd/releases/download/%WIKICMD_VERSION%/wikicmd_%WIKICMD_VERSION%_linux-386.zip
+$ unzip wikicmd_%WIKICMD_VERSION%_linux-386.zip
 ```
 
 > If you're using MacOS, you'll need to replace the download link above with the one for your platform. [Check the releases page](https://github.com/dhuan/wikicmd/releases) to see all supported platforms and download the one that matches your system.
