@@ -4,7 +4,6 @@ on:
   push:                                                                                                                                                       
     branches:
       - master
-      - ci_docs
 
 jobs:
   publish_docs:
