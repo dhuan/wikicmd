@@ -5,9 +5,6 @@ on:
     branches:
       - master
       - ci_docs
-    paths:                                                                                                                                                    
-      - '**.md'
-      - '.github/workflows/docs.yml'
 
 jobs:
   publish_docs:
