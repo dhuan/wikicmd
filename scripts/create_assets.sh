@@ -32,7 +32,7 @@ do
 
     TMP_BKP=$(mktemp)
     cp internal/wikicmd/wikicmd.go "$TMP_BKP"
-    sed -i "s/__VERSION__/$LATEST_VERSION/g" internal/wikicmd/wikicmd.go
+    sed -i "s/__VERSION__/$WIKICMD_VERSION/g" internal/wikicmd/wikicmd.go
     sed -i "s/__GOOS__/$GOOS/g" internal/wikicmd/wikicmd.go
     sed -i "s/__GOARCH__/$GOARCH/g" internal/wikicmd/wikicmd.go
 
