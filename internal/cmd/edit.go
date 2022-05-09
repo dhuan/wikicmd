@@ -35,7 +35,7 @@ var editCmd = &cobra.Command{
 		}
 
 		if changed {
-			summary, err := promptSummary()
+			summary, err := resolveSummary(flagEditMessage)
 			if err != nil {
 				panic(err)
 			}
@@ -65,7 +65,11 @@ var editCmd = &cobra.Command{
 	},
 }
 
-func promptSummary() (string, error) {
+func resolveSummary(flagEditMessage string) (string, error) {
+	if flagEditMessage != "" {
+		return flagEditMessage, nil
+	}
+
 	inputSummary, err := input.ResponsePrompt[bool](
 		"Would you like to set a summary for this change (yes/no): ",
 		map[string]bool{
