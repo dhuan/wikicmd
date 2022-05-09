@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/dhuan/wikicmd/internal/input"
 	"github.com/dhuan/wikicmd/internal/utils"
 	"github.com/dhuan/wikicmd/pkg/editor"
 	"github.com/dhuan/wikicmd/pkg/mw"
@@ -34,11 +35,17 @@ var editCmd = &cobra.Command{
 		}
 
 		if changed {
+			summary, err := promptSummary()
+			if err != nil {
+				panic(err)
+			}
+
 			_, err = mw.Edit(
 				wikiConfig,
 				apiCredentials,
 				pageName,
 				newContent,
+				summary,
 				hookOptions,
 			)
 			if err != nil {
@@ -56,4 +63,31 @@ var editCmd = &cobra.Command{
 
 		fmt.Println("No changes were made.")
 	},
+}
+
+func promptSummary() (string, error) {
+	inputSummary, err := input.ResponsePrompt[bool](
+		"Would you like to set a summary for this change (yes/no): ",
+		map[string]bool{
+			"yes": true,
+			"y":   true,
+			"no":  false,
+		},
+		false,
+		false,
+	)
+	if err != nil {
+		return "", err
+	}
+
+	if !inputSummary {
+		return "", nil
+	}
+
+	summaryContent, _, err := editor.Edit("")
+	if err != nil {
+		return "", err
+	}
+
+	return summaryContent, nil
 }

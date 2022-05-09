@@ -113,18 +113,31 @@ func GetApiCredentials(config *Config, hook *HookOptions) (*ApiCredentials, erro
 	return &ApiCredentials{CsrfToken: csrfToken, LoginResult: loginResult}, nil
 }
 
-func Edit(config *Config, credentials *ApiCredentials, title string, content string, hook *HookOptions) (*EditResult, error) {
+func Edit(
+	config *Config,
+	credentials *ApiCredentials,
+	title string,
+	content string,
+	summary string,
+	hook *HookOptions,
+) (*EditResult, error) {
+	postFields := url.Values{
+		"action":      {"edit"},
+		"format":      {"jsonfm"},
+		"title":       {title},
+		"text":        {content},
+		"wrappedhtml": {"1"},
+		"token":       {credentials.CsrfToken.Token},
+	}
+
+	if summary != "" {
+		postFields["summary"] = []string{summary}
+	}
+
 	return requestWrapper[editResponse, EditResult](
 		fmt.Sprintf("%s/api.php", config.BaseAddress),
 		"POST",
-		url.Values{
-			"action":      {"edit"},
-			"format":      {"jsonfm"},
-			"title":       {title},
-			"text":        {content},
-			"wrappedhtml": {"1"},
-			"token":       {credentials.CsrfToken.Token},
-		},
+		postFields,
 		&editResponse{},
 		&EditResult{},
 		parseEditResponse,
