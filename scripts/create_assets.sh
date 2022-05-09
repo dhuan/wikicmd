@@ -30,7 +30,15 @@ do
     cp ./README.md $TARGET_PATH/.
     cp ./LICENSE $TARGET_PATH/.
 
-    GOOS=$GOOS GOARCH=$GOARCH go build -ldflags "-X main.version=$WIKICMD_VERSION" -o $TARGET_PATH/wikicmd
+    TMP_BKP=$(mktemp)
+    cp internal/wikicmd/wikicmd.go "$TMP_BKP"
+    sed -i "s/__VERSION__/$WIKICMD_VERSION/g" internal/wikicmd/wikicmd.go
+    sed -i "s/__GOOS__/$GOOS/g" internal/wikicmd/wikicmd.go
+    sed -i "s/__GOARCH__/$GOARCH/g" internal/wikicmd/wikicmd.go
+
+    GOOS=$GOOS GOARCH=$GOARCH go build -o $TARGET_PATH/wikicmd
+
+    cp "$TMP_BKP" internal/wikicmd/wikicmd.go
 done
 
 TARGET_FOLDERS=$(ls ./release_downloads)
