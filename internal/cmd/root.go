@@ -28,6 +28,7 @@ func Execute() error {
 	rootCmd.AddCommand(importCmd)
 	rootCmd.AddCommand(configCmd)
 	rootCmd.AddCommand(switchCmd)
+	rootCmd.AddCommand(versionCmd)
 
 	return rootCmd.Execute()
 }
