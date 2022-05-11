@@ -123,7 +123,7 @@ func importPage(
 	fileContent []byte,
 	hook *mw.HookOptions,
 ) error {
-	pageName := utils.FilePathToPageName(filePath)
+	pageName := utils.FilePathToPageName(config.ImportExtensionsPage(), filePath)
 	_, err := mw.Edit(
 		wikiConfig,
 		apiCredentials,

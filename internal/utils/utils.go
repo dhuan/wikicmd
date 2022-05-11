@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -106,10 +107,29 @@ func FileExists(filePath string) bool {
 	return true
 }
 
-func FilePathToPageName(filePath string) string {
+func FilePathToPageName(allowedExtensions []string, filePath string) string {
+	allowedExtensionsRegex := make([]string, len(allowedExtensions))
 	fileName := filepath.Base(filePath)
 
-	return strings.Replace(fileName, ".wikitext", "", 1)
+	for i, extension := range allowedExtensions {
+		allowedExtensionsRegex[i] = fmt.Sprintf(`\.%s$`, extension)
+	}
+
+	return ReplaceRegex(fileName, allowedExtensionsRegex, "")
+}
+
+func ReplaceRegex(subject string, find []string, replaceWith string) string {
+	if len(find) == 0 {
+		return subject
+	}
+
+	re := regexp.MustCompile(find[0])
+
+	return ReplaceRegex(
+		re.ReplaceAllString(subject, replaceWith),
+		find[1:],
+		replaceWith,
+	)
 }
 
 func Wget(url string) ([]byte, error) {
