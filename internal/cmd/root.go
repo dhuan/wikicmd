@@ -6,10 +6,10 @@ import (
 
 var (
 	//Flags
-	flagVerbose     bool
-	flagConfigNew   bool
-	flagExportType  string
-	flagEditMessage string
+	flagVerbose    bool
+	flagConfigNew  bool
+	flagExportType string
+	flagMessage    string
 
 	rootCmd = &cobra.Command{
 		Use:   "wikicmd",
@@ -21,7 +21,8 @@ func Execute() error {
 	rootCmd.PersistentFlags().BoolVarP(&flagVerbose, "verbose", "v", false, "Verbose output.")
 	configCmd.Flags().BoolVarP(&flagConfigNew, "new", "n", false, "Create new configuration file even if one already exists.")
 	exportCmd.Flags().StringVarP(&flagExportType, "type", "t", "all", "Which type of item to export. (all/page/image)")
-	editCmd.Flags().StringVarP(&flagEditMessage, "message", "m", "", "Summary for your change.")
+	importCmd.Flags().StringVarP(&flagMessage, "message", "m", "", "Summary for the page you're importing.")
+	editCmd.Flags().StringVarP(&flagMessage, "message", "m", "", "Summary for your change.")
 
 	rootCmd.AddCommand(editCmd)
 	rootCmd.AddCommand(exportCmd)

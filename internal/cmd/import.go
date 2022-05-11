@@ -129,7 +129,7 @@ func importPage(
 		apiCredentials,
 		pageName,
 		string(fileContent),
-		"",
+		flagMessage,
 		hook,
 	)
 	if err != nil {

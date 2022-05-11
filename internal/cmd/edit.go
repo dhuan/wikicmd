@@ -35,7 +35,7 @@ var editCmd = &cobra.Command{
 		}
 
 		if changed {
-			summary, err := resolveSummary(flagEditMessage)
+			summary, err := resolveSummary(flagMessage)
 			if err != nil {
 				panic(err)
 			}
