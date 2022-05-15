@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/dhuan/wikicmd/internal/config"
 	"github.com/dhuan/wikicmd/internal/input"
 	"github.com/dhuan/wikicmd/internal/utils"
 	"github.com/dhuan/wikicmd/pkg/editor"
@@ -15,7 +16,7 @@ var editCmd = &cobra.Command{
 	Short: "Edit pages",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		wikiConfig, apiCredentials, hookOptions := beforeCommand(true)
+		wikiConfig, apiCredentials, userSettings, hookOptions := beforeCommand(true)
 		pageName := args[0]
 
 		page, err := mw.GetPage(
@@ -29,13 +30,13 @@ var editCmd = &cobra.Command{
 			panic("Failed to get page.")
 		}
 
-		newContent, changed, err := editor.Edit(page.Content)
+		newContent, changed, err := editor.Edit(userSettings.Editor, page.Content)
 		if err != nil {
 			panic("Failed to edit.")
 		}
 
 		if changed {
-			summary, err := resolveSummary(flagMessage)
+			summary, err := resolveSummary(userSettings, flagMessage)
 			if err != nil {
 				panic(err)
 			}
@@ -65,7 +66,7 @@ var editCmd = &cobra.Command{
 	},
 }
 
-func resolveSummary(flagEditMessage string) (string, error) {
+func resolveSummary(userSettings *config.UserSettings, flagEditMessage string) (string, error) {
 	if flagEditMessage != "" {
 		return flagEditMessage, nil
 	}
@@ -88,7 +89,7 @@ func resolveSummary(flagEditMessage string) (string, error) {
 		return "", nil
 	}
 
-	summaryContent, _, err := editor.Edit("")
+	summaryContent, _, err := editor.Edit(userSettings.Editor, "")
 	if err != nil {
 		return "", err
 	}

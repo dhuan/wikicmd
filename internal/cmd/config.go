@@ -34,7 +34,18 @@ var configCmd = &cobra.Command{
 			}
 		}
 
-		err = editor.EditFile(configFilePath)
+		userSettings := config.DefaultUserSettings
+		configRoot := &config.ConfigRoot{}
+		if configFileExists {
+			configRoot, err = config.GetConfigFromPath(configFilePath)
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		userSettings = config.GetUserSettings(configRoot)
+
+		err = editor.EditFile(userSettings.Editor, configFilePath)
 		if err != nil {
 			panic(err)
 		}

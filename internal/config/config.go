@@ -7,6 +7,8 @@ import (
 	"os"
 )
 
+var default_editor string = "vim"
+
 type Config struct {
 	Id               string   `json:"id"`
 	Address          string   `json:"address"`
@@ -18,6 +20,15 @@ type Config struct {
 type ConfigRoot struct {
 	Config  []Config `json:"config"`
 	Default string   `json:"default"`
+	Editor  string   `json:"editor"`
+}
+
+type UserSettings struct {
+	Editor string
+}
+
+var DefaultUserSettings *UserSettings = &UserSettings{
+	Editor: default_editor,
 }
 
 func GetConfigFilePath() (string, bool, error) {
@@ -41,14 +52,37 @@ func GetConfigFilePath() (string, bool, error) {
 	return configFileName, true, nil
 }
 
-func Get() (*Config, error) {
+func Get() (*Config, *ConfigRoot, error) {
 	configRoot, err := getConfig()
 
 	if err != nil {
-		return &Config{}, err
+		return &Config{}, &ConfigRoot{}, err
 	}
 
-	return resolveDefaultConfig(configRoot)
+	config, err := resolveDefaultConfig(configRoot)
+	if err != nil {
+		return &Config{}, &ConfigRoot{}, err
+	}
+
+	return config, configRoot, nil
+}
+
+func GetUserSettings(configRoot *ConfigRoot) *UserSettings {
+	return &UserSettings{resolveUserEditor(configRoot)}
+}
+
+func resolveUserEditor(configRoot *ConfigRoot) string {
+	if configRoot.Editor != "" {
+		return configRoot.Editor
+	}
+
+	editor := os.Getenv("EDITOR")
+
+	if editor != "" {
+		return editor
+	}
+
+	return default_editor
 }
 
 func Set(configRoot *ConfigRoot) error {
@@ -89,6 +123,10 @@ func getConfig() (*ConfigRoot, error) {
 		return &ConfigRoot{}, ErrConfigDoesNotExist
 	}
 
+	return GetConfigFromPath(configFilePath)
+}
+
+func GetConfigFromPath(configFilePath string) (*ConfigRoot, error) {
 	fileContent, err := os.ReadFile(configFilePath)
 	if err != nil {
 		return &ConfigRoot{}, err

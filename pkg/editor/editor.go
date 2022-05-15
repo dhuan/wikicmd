@@ -5,9 +5,7 @@ import (
 	"os/exec"
 )
 
-var default_editor = "vim"
-
-func Edit(content string) (string, bool, error) {
+func Edit(editorProgram, content string) (string, bool, error) {
 	fileName, err := mktemp()
 	if err != nil {
 		return "", false, err
@@ -22,7 +20,7 @@ func Edit(content string) (string, bool, error) {
 		return "", false, err
 	}
 
-	cmd := exec.Command(getUserEditorCommand(), fileName)
+	cmd := exec.Command(editorProgram, fileName)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -46,8 +44,8 @@ func Edit(content string) (string, bool, error) {
 	return string(fileContent), changed, nil
 }
 
-func EditFile(filePath string) error {
-	cmd := exec.Command(getUserEditorCommand(), filePath)
+func EditFile(editorProgram, filePath string) error {
+	cmd := exec.Command(editorProgram, filePath)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -62,14 +60,4 @@ func mktemp() (string, error) {
 	}
 
 	return string(result), nil
-}
-
-func getUserEditorCommand() string {
-	editor := os.Getenv("EDITOR")
-
-	if editor == "" {
-		return default_editor
-	}
-
-	return editor
 }

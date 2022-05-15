@@ -19,8 +19,8 @@ func handleErrorGettingApiCredentials(err error, user string, wikiAddress string
 	fmt.Println("Failed to get API Credentials.")
 }
 
-func beforeCommand(withApiCredentials bool) (*mw.Config, *mw.ApiCredentials, *mw.HookOptions) {
-	userConfig, err := config.Get()
+func beforeCommand(withApiCredentials bool) (*mw.Config, *mw.ApiCredentials, *config.UserSettings, *mw.HookOptions) {
+	userConfig, configRoot, err := config.Get()
 	if errors.Is(err, config.ErrConfigDoesNotExist) {
 		fmt.Println("You don't seem to have a configuration file. Try 'wikicmd config' to initialize a new configuration.")
 
@@ -67,7 +67,9 @@ func beforeCommand(withApiCredentials bool) (*mw.Config, *mw.ApiCredentials, *mw
 		}
 	}
 
-	return wikiConfig, apiCredentials, hook
+	userSettings := config.GetUserSettings(configRoot)
+
+	return wikiConfig, apiCredentials, userSettings, hook
 }
 
 func nilHook(logMessage string) {

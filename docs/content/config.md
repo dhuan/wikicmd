@@ -7,7 +7,6 @@ $ wikicmd config
 Wiki address: (https://en.wikipedia.org/w)
 Login: myuser
 Password: mypassword
-
 Next, a configuration file will be created for you and saved as /home/myuser/.wikicmd.json
 
 Is this OK? (yes):    
@@ -37,23 +36,25 @@ The `config` field takes a list of "Wiki Configuration Objects". In the example 
 
 ## Configuration Parameters
 
-### id
+### Wiki Object
+
+#### id
 
 An ID to identify a Wiki with.
 
-### address
+#### address
 
 A Wiki URL. For example `https://en.wikipedia.org/w`.
 
-### user
+#### user
 
 A username that you can login with.
 
-### password
+#### password
 
 Your password.
 
-### importExtensions (optional)
+#### importExtensions (optional)
 
 A list of file extensions that can be be imported.
 
@@ -66,3 +67,16 @@ MediaWiki by default allows only a set of file types to be uploaded. However the
   "wmv"
 ]
 ```
+### Root Level Configuration
+
+The following configuration parameters are not related to any specific Wiki instance.
+
+#### editor (optional)
+
+Sets the text-editing program for editing Wiki Pages.
+
+If you don't set this parameter, the text editor that will open up will be the one defined in your `EDITOR` shell environment variable. If that is not set as well, it will default to `vim`.
+
+#### default (optional)
+
+The wiki that you're currently working with. This parameter is manipulated by the [switch command.](cmd_switch.md)

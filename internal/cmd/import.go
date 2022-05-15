@@ -17,8 +17,8 @@ var importCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import pages and images",
 	Run: func(cmd *cobra.Command, filePaths []string) {
-		wikiConfig, apiCredentials, hook := beforeCommand(true)
-		userConfig, err := config.Get()
+		wikiConfig, apiCredentials, _, hook := beforeCommand(true)
+		userConfig, _, err := config.Get()
 		if err != nil {
 			panic(err)
 		}

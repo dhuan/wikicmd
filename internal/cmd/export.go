@@ -22,7 +22,7 @@ var exportCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		wikiConfig, apiCredentials, hook := beforeCommand(true)
+		wikiConfig, apiCredentials, _, hook := beforeCommand(true)
 		exportTo := args[0]
 
 		exportCount := 0
