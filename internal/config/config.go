@@ -72,14 +72,14 @@ func GetUserSettings(configRoot *ConfigRoot) *UserSettings {
 }
 
 func resolveUserEditor(configRoot *ConfigRoot) string {
-	if configRoot.Editor != "" {
-		return configRoot.Editor
-	}
-
 	editor := os.Getenv("EDITOR")
 
 	if editor != "" {
 		return editor
+	}
+
+	if configRoot.Editor != "" {
+		return configRoot.Editor
 	}
 
 	return default_editor

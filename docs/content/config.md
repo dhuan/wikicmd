@@ -73,9 +73,7 @@ The following configuration parameters are not related to any specific Wiki inst
 
 #### editor (optional)
 
-Sets the text-editing program for editing Wiki Pages.
-
-If you don't set this parameter, the text editor that will open up will be the one defined in your `EDITOR` shell environment variable. If that is not set as well, it will default to `vim`.
+Sets the text-editing program for editing Wiki Pages. Defaults to `vim` if not set. The `EDITOR` shell environment variable can also be used to overwrite this option.
 
 #### default (optional)
 
