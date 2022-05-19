@@ -8,6 +8,7 @@
 - [Configuring](./config.md)
 - [Get your Wiki Credentials](./credentials.md)
 - [Troubleshooting](./troubleshooting.md)
+- [Compatibility](./compatibility.md)
 
 # Command Reference
 
