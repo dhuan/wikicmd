@@ -18,13 +18,24 @@ jobs:
 
     - name: Build documentation
       run: |
-          make docs_build
-          mkdir docs_html
-          mv docs.tgz ./docs_html
-          cd ./docs_html
+          TMP_DIR=$(mktemp -d)
+          mkdir "$TMP_DIR"/latest
+
+          WIKICMD_DOCS_BUILD_SAVE_AS="$TMP_DIR/latest/docs.tgz" make docs_build
+          cd "$TMP_DIR/latest"
           tar xzvf ./docs.tgz
-          rm ./docs.tgz
-          cd ..
+          rm docs.tgz
+          cd -
+
+          LATEST_VERSION=$(git describe --tags --abbrev=0 origin/master)
+          git checkout "$LATEST_VERSION"
+          WIKICMD_DOCS_BUILD_SAVE_AS="$TMP_DIR/docs.tgz" make docs_build
+          cd "$TMP_DIR"
+          tar xzvf ./docs.tgz
+          rm docs.tgz
+          cd -
+
+          cp -r "$TMP_DIR" ./docs_html
 
     - name: Deploy docs
       uses: peaceiris/actions-gh-pages@v3
