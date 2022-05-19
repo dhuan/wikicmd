@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 )
@@ -107,7 +106,7 @@ func resolveDefaultConfig(configRoot *ConfigRoot) (*WikiConfig, error) {
 	}
 
 	if len(configRoot.Wikis) == 0 {
-		return &WikiConfig{}, errors.New("No configs found.")
+		return &WikiConfig{}, ErrConfigDoesNotHaveWiki
 	}
 
 	return &configRoot.Wikis[0], nil

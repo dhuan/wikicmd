@@ -26,6 +26,11 @@ func beforeCommand(withApiCredentials bool) (*mw.Config, *mw.ApiCredentials, *co
 
 		os.Exit(1)
 	}
+	if errors.Is(err, config.ErrConfigDoesNotHaveWiki) {
+		fmt.Println("Your configuration doesn't seem to have a Wiki defined. Try 'wikicmd config --new' to initialize a new configuration.")
+
+		os.Exit(1)
+	}
 	if err != nil {
 		panic(err)
 	}
