@@ -192,6 +192,7 @@ $ make build
 Wiki address: (https://en.wikipedia.org/w)
 Login: myuser
 Password: mypassword
+
 Next, a configuration file will be created for you and saved as /home/myuser/.wikicmd.json
 
 Is this OK? (yes):    
@@ -213,16 +214,15 @@ Done!
 </code></pre>
 <p>The <code>config</code> field takes a list of &quot;Wiki Configuration Objects&quot;. In the example above, we have only one Wiki, <code>my_wiki</code>, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the <a href="cmd_switch.html">switch command</a>.</p>
 <h2 id="configuration-parameters"><a class="header" href="#configuration-parameters">Configuration Parameters</a></h2>
-<h3 id="wiki-object"><a class="header" href="#wiki-object">Wiki Object</a></h3>
-<h4 id="id"><a class="header" href="#id">id</a></h4>
+<h3 id="id"><a class="header" href="#id">id</a></h3>
 <p>An ID to identify a Wiki with.</p>
-<h4 id="address"><a class="header" href="#address">address</a></h4>
+<h3 id="address"><a class="header" href="#address">address</a></h3>
 <p>A Wiki URL. For example <code>https://en.wikipedia.org/w</code>.</p>
-<h4 id="user"><a class="header" href="#user">user</a></h4>
+<h3 id="user"><a class="header" href="#user">user</a></h3>
 <p>A username that you can login with.</p>
-<h4 id="password"><a class="header" href="#password">password</a></h4>
+<h3 id="password"><a class="header" href="#password">password</a></h3>
 <p>Your password.</p>
-<h4 id="importextensions-optional"><a class="header" href="#importextensions-optional">importExtensions (optional)</a></h4>
+<h3 id="importextensions-optional"><a class="header" href="#importextensions-optional">importExtensions (optional)</a></h3>
 <p>A list of file extensions that can be be imported.</p>
 <p>MediaWiki by default allows only a set of file types to be uploaded. However there are extensions that enhance MediaWiki to allow other kinds of files. If you customised your wiki to enable uploading other types of files, you can use this configuration parameter to enable wikicmd to import these files.</p>
 <pre><code>&quot;importExtensions&quot;: [
@@ -231,12 +231,6 @@ Done!
   &quot;wmv&quot;
 ]
 </code></pre>
-<h3 id="root-level-configuration"><a class="header" href="#root-level-configuration">Root Level Configuration</a></h3>
-<p>The following configuration parameters are not related to any specific Wiki instance.</p>
-<h4 id="editor-optional"><a class="header" href="#editor-optional">editor (optional)</a></h4>
-<p>Sets the text-editing program for editing Wiki Pages. Defaults to <code>vim</code> if not set. The <code>EDITOR</code> shell environment variable can also be used to overwrite this option.</p>
-<h4 id="default-optional"><a class="header" href="#default-optional">default (optional)</a></h4>
-<p>The wiki that you're currently working with. This parameter is manipulated by the <a href="cmd_switch.html">switch command.</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="get-your-wiki-credentials"><a class="header" href="#get-your-wiki-credentials">Get your Wiki Credentials</a></h1>
 <p>wikicmd is meant to be used with <a href="https://www.mediawiki.org/wiki/Manual:Bot_passwords">MediaWiki's Bot Passwords.</a> Getting your Bot Password is an easy process once you have your user account for Wikipedia or any MediaWiki website. This guide will show you how to do it.</p>
 <blockquote>
@@ -316,8 +310,6 @@ $ wikicmd import /path/to/some/files/*.wikitext
 <h2 id="what-files-can-be-imported"><a class="header" href="#what-files-can-be-imported">What files can be imported</a></h2>
 <p><strong>Wiki pages</strong>: Text files with the <code>.wikitext</code> or <code>.txt</code>. extension.</p>
 <p><strong>Images</strong>: Images with the following extensions can be imported: <code>.jpg</code>, <code>.jpeg</code>, <code>.png</code>.</p>
-<h2 id="options-3"><a class="header" href="#options-3">Options</a></h2>
-<p><strong>--message | -m</strong>: The <a href="https://meta.wikimedia.org/wiki/Help:Edit_summary">edit summary.</a> If set, the imported content will be saved with the given summary message.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="switch"><a class="header" href="#switch">switch</a></h1>
 <p>Sets the current Wiki that you're working with, given a Wiki ID.</p>
 <pre><code class="language-sh">$ wikicmd switch my_wiki
