@@ -4,11 +4,10 @@ on:
   push:                                                                                                                                                       
     branches:
       - master
-      - test_gh_pages_latest
 
 jobs:
-  publish_docs_stable:
-    name: Publish Docs Stable
+  publish_docs:
+    name: Publish Docs
     runs-on: ubuntu-latest
     steps:
 
@@ -16,11 +15,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
-
-    - name: Check out to latest stable version
-      run: |
-        LATEST_VERSION=$(git describe --tags --abbrev=0 origin/master)
-        git checkout "$LATEST_VERSION"
 
     - name: Build documentation
       run: |
@@ -37,31 +31,3 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./docs_html
-
-  publish_docs_latest:
-    name: Publish Docs Latest
-    runs-on: ubuntu-latest
-    steps:
-
-    - name: Check out code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-        ref: 
-
-    - name: Build documentation
-      run: |
-          make docs_build
-          mkdir docs_html
-          mv docs.tgz ./docs_html
-          cd ./docs_html
-          tar xzvf ./docs.tgz
-          rm ./docs.tgz
-          cd ..
-
-    - name: Deploy docs
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs_html
-        destination_dir: latest
