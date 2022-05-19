@@ -34,7 +34,7 @@ Supposing that your Wikipedia's Username is `JohnDoe` and your Bot Password is n
 
 ```json
 {
-  "config": [
+  "wikis": [
     {
       "id": "my_wiki",
       "address": "https://en.wikipedia.org/w",

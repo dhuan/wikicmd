@@ -10,7 +10,7 @@ Your wikicmd configuration file can contain multiple Wiki Configuration Objects.
 
 ```json
 {
-  "config": [
+  "wikis": [
     {
       "id": "my_wiki"
       ...

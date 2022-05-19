@@ -84,8 +84,8 @@ func newConfigWizard(filePath string, requestingNew bool) (bool, error) {
 	}
 
 	newConfig := config.ConfigRoot{
-		Config: []config.Config{
-			config.Config{
+		Wikis: []config.WikiConfig{
+			config.WikiConfig{
 				Id:               "my_wiki",
 				Address:          inputWikiAddress,
 				User:             inputLogin,

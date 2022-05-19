@@ -41,7 +41,7 @@ var importCmd = &cobra.Command{
 }
 
 func runImport(
-	userConfig *config.Config,
+	userConfig *config.WikiConfig,
 	wikiConfig *mw.Config,
 	apiCredentials *mw.ApiCredentials,
 	filePaths []string,
@@ -96,7 +96,7 @@ func fileIsPage(filePath string) bool {
 	return utils.ExtensionMatches(config.ImportExtensionsPage(), filePath)
 }
 
-func fileIsImage(userConfig *config.Config, filePath string) bool {
+func fileIsImage(userConfig *config.WikiConfig, filePath string) bool {
 	return utils.ExtensionMatches(config.ImportExtensionsMedia(userConfig), filePath)
 }
 

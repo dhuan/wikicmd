@@ -1,5 +1,5 @@
 {
-  "config": [
+  "wikis": [
     {
       "id": "my_wiki",
       "address": "http://localhost:7000",

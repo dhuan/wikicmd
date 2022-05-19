@@ -21,7 +21,7 @@ A configuration file is formatted as follows:
 
 ```json
 {
-  "config": [
+  "wikis": [
     {
       "id": "my_wiki",
       "address": "https://en.wikipedia.org/w",
@@ -32,7 +32,7 @@ A configuration file is formatted as follows:
 }
 ```
 
-The `config` field takes a list of "Wiki Configuration Objects". In the example above, we have only one Wiki, `my_wiki`, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the [switch command](cmd_switch.md).
+The `wikis` field takes a list of "Wiki Configuration Objects". In the example above, we have only one Wiki, `my_wiki`, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the [switch command](cmd_switch.md).
 
 ## Configuration Parameters
 

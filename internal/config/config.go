@@ -9,7 +9,7 @@ import (
 
 var default_editor string = "vim"
 
-type Config struct {
+type WikiConfig struct {
 	Id               string   `json:"id"`
 	Address          string   `json:"address"`
 	User             string   `json:"user"`
@@ -18,9 +18,9 @@ type Config struct {
 }
 
 type ConfigRoot struct {
-	Config  []Config `json:"config"`
-	Default string   `json:"default"`
-	Editor  string   `json:"editor"`
+	Wikis   []WikiConfig `json:"wikis"`
+	Default string       `json:"default"`
+	Editor  string       `json:"editor"`
 }
 
 type UserSettings struct {
@@ -52,16 +52,16 @@ func GetConfigFilePath() (string, bool, error) {
 	return configFileName, true, nil
 }
 
-func Get() (*Config, *ConfigRoot, error) {
+func Get() (*WikiConfig, *ConfigRoot, error) {
 	configRoot, err := getConfig()
 
 	if err != nil {
-		return &Config{}, &ConfigRoot{}, err
+		return &WikiConfig{}, &ConfigRoot{}, err
 	}
 
 	config, err := resolveDefaultConfig(configRoot)
 	if err != nil {
-		return &Config{}, &ConfigRoot{}, err
+		return &WikiConfig{}, &ConfigRoot{}, err
 	}
 
 	return config, configRoot, nil
@@ -99,18 +99,18 @@ func Set(configRoot *ConfigRoot) error {
 	return os.WriteFile(configFilePath, fileContent, 0644)
 }
 
-func resolveDefaultConfig(configRoot *ConfigRoot) (*Config, error) {
-	for _, config := range configRoot.Config {
+func resolveDefaultConfig(configRoot *ConfigRoot) (*WikiConfig, error) {
+	for _, config := range configRoot.Wikis {
 		if configRoot.Default == config.Id {
 			return &config, nil
 		}
 	}
 
-	if len(configRoot.Config) == 0 {
-		return &Config{}, errors.New("No configs found.")
+	if len(configRoot.Wikis) == 0 {
+		return &WikiConfig{}, errors.New("No configs found.")
 	}
 
-	return &configRoot.Config[0], nil
+	return &configRoot.Wikis[0], nil
 }
 
 func getConfig() (*ConfigRoot, error) {
@@ -159,6 +159,6 @@ func ImportExtensionsPage() []string {
 	return pageExtensions
 }
 
-func ImportExtensionsMedia(config *Config) []string {
+func ImportExtensionsMedia(config *WikiConfig) []string {
 	return append(imageExtensions, config.ImportExtensions...)
 }

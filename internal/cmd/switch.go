@@ -24,8 +24,8 @@ var switchCmd = &cobra.Command{
 		wikiId := args[0]
 
 		wikiExists := false
-		availableWikis := make([]string, len(configRoot.Config))
-		for i, config := range configRoot.Config {
+		availableWikis := make([]string, len(configRoot.Wikis))
+		for i, config := range configRoot.Wikis {
 			if wikiId == config.Id {
 				wikiExists = true
 			}
