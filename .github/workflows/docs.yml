@@ -4,6 +4,7 @@ on:
   push:                                                                                                                                                       
     branches:
       - master
+      - test_gh_pages_latest
 
 jobs:
   publish_docs:
