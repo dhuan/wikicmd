@@ -76,7 +76,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="wikicmd.html"><strong aria-hidden="true">1.</strong> wikicmd</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installing</a></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuring</a></li><li class="chapter-item expanded "><a href="credentials.html"><strong aria-hidden="true">4.</strong> Get your Wiki Credentials</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">5.</strong> Troubleshooting</a></li><li class="chapter-item expanded affix "><li class="part-title">Command Reference</li><li class="chapter-item expanded "><a href="cmd_config.html"><strong aria-hidden="true">6.</strong> Config</a></li><li class="chapter-item expanded "><a href="cmd_edit.html"><strong aria-hidden="true">7.</strong> Edit</a></li><li class="chapter-item expanded "><a href="cmd_export.html"><strong aria-hidden="true">8.</strong> Export</a></li><li class="chapter-item expanded "><a href="cmd_import.html"><strong aria-hidden="true">9.</strong> Import</a></li><li class="chapter-item expanded "><a href="cmd_switch.html"><strong aria-hidden="true">10.</strong> Switch</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="wikicmd.html"><strong aria-hidden="true">1.</strong> wikicmd</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installing</a></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuring</a></li><li class="chapter-item expanded "><a href="credentials.html"><strong aria-hidden="true">4.</strong> Get your Wiki Credentials</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">5.</strong> Troubleshooting</a></li><li class="chapter-item expanded "><a href="compatibility.html"><strong aria-hidden="true">6.</strong> Compatibility</a></li><li class="chapter-item expanded affix "><li class="part-title">Command Reference</li><li class="chapter-item expanded "><a href="cmd_config.html"><strong aria-hidden="true">7.</strong> Config</a></li><li class="chapter-item expanded "><a href="cmd_edit.html"><strong aria-hidden="true">8.</strong> Edit</a></li><li class="chapter-item expanded "><a href="cmd_export.html"><strong aria-hidden="true">9.</strong> Export</a></li><li class="chapter-item expanded "><a href="cmd_import.html"><strong aria-hidden="true">10.</strong> Import</a></li><li class="chapter-item expanded "><a href="cmd_switch.html"><strong aria-hidden="true">11.</strong> Switch</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -144,8 +144,8 @@
 <h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
 <p>For installation instructions, see <a href="install.html">Installation</a>. If you just want to quickly download the latest version:</p>
 <ul>
-<li><a href="https://github.com/dhuan/wikicmd/releases/download/v0.1.0/wikicmd_v0.1.0_linux-386.zip">Download for Linux</a></li>
-<li><a href="https://github.com/dhuan/wikicmd/releases/download/v0.1.0/wikicmd_v0.1.0_darwin-amd64.zip">Download for MacOS</a></li>
+<li><a href="https://github.com/dhuan/wikicmd/releases/download/v0.2.0/wikicmd_v0.2.0_linux-386.zip">Download for Linux</a></li>
+<li><a href="https://github.com/dhuan/wikicmd/releases/download/v0.2.0/wikicmd_v0.2.0_darwin-amd64.zip">Download for MacOS</a></li>
 </ul>
 <h2 id="useful-links"><a class="header" href="#useful-links">Useful Links</a></h2>
 <ul>
@@ -159,8 +159,8 @@
 <div style="break-before: page; page-break-before: always;"></div><h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
 <h2 id="download-it"><a class="header" href="#download-it">Download it</a></h2>
 <p>This is the easiest installation method.</p>
-<pre><code class="language-sh">$ wget https://github.com/dhuan/wikicmd/releases/download/v0.1.0/wikicmd_v0.1.0_linux-386.zip
-$ unzip wikicmd_v0.1.0_linux-386.zip
+<pre><code class="language-sh">$ wget https://github.com/dhuan/wikicmd/releases/download/v0.2.0/wikicmd_v0.2.0_linux-386.zip
+$ unzip wikicmd_v0.2.0_linux-386.zip
 </code></pre>
 <blockquote>
 <p>If you're using MacOS, you'll need to replace the download link above with the one for your platform. <a href="https://github.com/dhuan/wikicmd/releases">Check the releases page</a> to see all supported platforms and download the one that matches your system.</p>
@@ -192,7 +192,6 @@ $ make build
 Wiki address: (https://en.wikipedia.org/w)
 Login: myuser
 Password: mypassword
-
 Next, a configuration file will be created for you and saved as /home/myuser/.wikicmd.json
 
 Is this OK? (yes):    
@@ -202,7 +201,7 @@ Done!
 <h2 id="configuration-structure"><a class="header" href="#configuration-structure">Configuration Structure</a></h2>
 <p>A configuration file is formatted as follows:</p>
 <pre><code class="language-json">{
-  &quot;config&quot;: [
+  &quot;wikis&quot;: [
     {
       &quot;id&quot;: &quot;my_wiki&quot;,
       &quot;address&quot;: &quot;https://en.wikipedia.org/w&quot;,
@@ -212,17 +211,18 @@ Done!
   ]
 }
 </code></pre>
-<p>The <code>config</code> field takes a list of &quot;Wiki Configuration Objects&quot;. In the example above, we have only one Wiki, <code>my_wiki</code>, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the <a href="cmd_switch.html">switch command</a>.</p>
+<p>The <code>wikis</code> field takes a list of &quot;Wiki Configuration Objects&quot;. In the example above, we have only one Wiki, <code>my_wiki</code>, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the <a href="cmd_switch.html">switch command</a>.</p>
 <h2 id="configuration-parameters"><a class="header" href="#configuration-parameters">Configuration Parameters</a></h2>
-<h3 id="id"><a class="header" href="#id">id</a></h3>
+<h3 id="wiki-object"><a class="header" href="#wiki-object">Wiki Object</a></h3>
+<h4 id="id"><a class="header" href="#id">id</a></h4>
 <p>An ID to identify a Wiki with.</p>
-<h3 id="address"><a class="header" href="#address">address</a></h3>
+<h4 id="address"><a class="header" href="#address">address</a></h4>
 <p>A Wiki URL. For example <code>https://en.wikipedia.org/w</code>.</p>
-<h3 id="user"><a class="header" href="#user">user</a></h3>
+<h4 id="user"><a class="header" href="#user">user</a></h4>
 <p>A username that you can login with.</p>
-<h3 id="password"><a class="header" href="#password">password</a></h3>
+<h4 id="password"><a class="header" href="#password">password</a></h4>
 <p>Your password.</p>
-<h3 id="importextensions-optional"><a class="header" href="#importextensions-optional">importExtensions (optional)</a></h3>
+<h4 id="importextensions-optional"><a class="header" href="#importextensions-optional">importExtensions (optional)</a></h4>
 <p>A list of file extensions that can be be imported.</p>
 <p>MediaWiki by default allows only a set of file types to be uploaded. However there are extensions that enhance MediaWiki to allow other kinds of files. If you customised your wiki to enable uploading other types of files, you can use this configuration parameter to enable wikicmd to import these files.</p>
 <pre><code>&quot;importExtensions&quot;: [
@@ -231,6 +231,12 @@ Done!
   &quot;wmv&quot;
 ]
 </code></pre>
+<h3 id="root-level-configuration"><a class="header" href="#root-level-configuration">Root Level Configuration</a></h3>
+<p>The following configuration parameters are not related to any specific Wiki instance.</p>
+<h4 id="editor-optional"><a class="header" href="#editor-optional">editor (optional)</a></h4>
+<p>Sets the text-editing program for editing Wiki Pages. Defaults to <code>vim</code> if not set. The <code>EDITOR</code> shell environment variable can also be used to overwrite this option.</p>
+<h4 id="default-optional"><a class="header" href="#default-optional">default (optional)</a></h4>
+<p>The wiki that you're currently working with. This parameter is manipulated by the <a href="cmd_switch.html">switch command.</a></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="get-your-wiki-credentials"><a class="header" href="#get-your-wiki-credentials">Get your Wiki Credentials</a></h1>
 <p>wikicmd is meant to be used with <a href="https://www.mediawiki.org/wiki/Manual:Bot_passwords">MediaWiki's Bot Passwords.</a> Getting your Bot Password is an easy process once you have your user account for Wikipedia or any MediaWiki website. This guide will show you how to do it.</p>
 <blockquote>
@@ -254,7 +260,7 @@ Delete pages
 <h2 id="3--configure-wikicmd-with-your-new-bot-password"><a class="header" href="#3--configure-wikicmd-with-your-new-bot-password">3-) Configure wikicmd with your new Bot Password</a></h2>
 <p>Supposing that your Wikipedia's Username is <code>JohnDoe</code> and your Bot Password is named <code>mybot</code>, and the randomly generated password is <code>123456789</code>, your wikicmd configuration should then be edited as such:</p>
 <pre><code class="language-json">{
-  &quot;config&quot;: [
+  &quot;wikis&quot;: [
     {
       &quot;id&quot;: &quot;my_wiki&quot;,
       &quot;address&quot;: &quot;https://en.wikipedia.org/w&quot;,
@@ -277,6 +283,13 @@ Delete pages
 <pre><code class="language-sh">$ export EDITOR=vscode
 $ wikicmd edit 'Some page'
 </code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h1>
+<p>The following is a list of versions of MediaWiki with which wikicmd has been tested and is known to work.</p>
+<ul>
+<li>1.37.2</li>
+<li>1.37.1</li>
+<li>1.37.0</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="config"><a class="header" href="#config">config</a></h1>
 <p>Opens your configuration file for editing, located at <code>~/.wikicmd.json</code>, if it exists. Otherwise creates a new configuration file for you.</p>
 <pre><code class="language-sh">$ wikicmd config
@@ -310,13 +323,15 @@ $ wikicmd import /path/to/some/files/*.wikitext
 <h2 id="what-files-can-be-imported"><a class="header" href="#what-files-can-be-imported">What files can be imported</a></h2>
 <p><strong>Wiki pages</strong>: Text files with the <code>.wikitext</code> or <code>.txt</code>. extension.</p>
 <p><strong>Images</strong>: Images with the following extensions can be imported: <code>.jpg</code>, <code>.jpeg</code>, <code>.png</code>.</p>
+<h2 id="options-3"><a class="header" href="#options-3">Options</a></h2>
+<p><strong>--message | -m</strong>: The <a href="https://meta.wikimedia.org/wiki/Help:Edit_summary">edit summary.</a> If set, the imported content will be saved with the given summary message.</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="switch"><a class="header" href="#switch">switch</a></h1>
 <p>Sets the current Wiki that you're working with, given a Wiki ID.</p>
 <pre><code class="language-sh">$ wikicmd switch my_wiki
 </code></pre>
 <p>Your wikicmd configuration file can contain multiple Wiki Configuration Objects.</p>
 <pre><code class="language-json">{
-  &quot;config&quot;: [
+  &quot;wikis&quot;: [
     {
       &quot;id&quot;: &quot;my_wiki&quot;
       ...

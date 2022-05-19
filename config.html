@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="wikicmd.html"><strong aria-hidden="true">1.</strong> wikicmd</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installing</a></li><li class="chapter-item expanded "><a href="config.html" class="active"><strong aria-hidden="true">3.</strong> Configuring</a></li><li class="chapter-item expanded "><a href="credentials.html"><strong aria-hidden="true">4.</strong> Get your Wiki Credentials</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">5.</strong> Troubleshooting</a></li><li class="chapter-item expanded affix "><li class="part-title">Command Reference</li><li class="chapter-item expanded "><a href="cmd_config.html"><strong aria-hidden="true">6.</strong> Config</a></li><li class="chapter-item expanded "><a href="cmd_edit.html"><strong aria-hidden="true">7.</strong> Edit</a></li><li class="chapter-item expanded "><a href="cmd_export.html"><strong aria-hidden="true">8.</strong> Export</a></li><li class="chapter-item expanded "><a href="cmd_import.html"><strong aria-hidden="true">9.</strong> Import</a></li><li class="chapter-item expanded "><a href="cmd_switch.html"><strong aria-hidden="true">10.</strong> Switch</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="wikicmd.html"><strong aria-hidden="true">1.</strong> wikicmd</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installing</a></li><li class="chapter-item expanded "><a href="config.html" class="active"><strong aria-hidden="true">3.</strong> Configuring</a></li><li class="chapter-item expanded "><a href="credentials.html"><strong aria-hidden="true">4.</strong> Get your Wiki Credentials</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">5.</strong> Troubleshooting</a></li><li class="chapter-item expanded "><a href="compatibility.html"><strong aria-hidden="true">6.</strong> Compatibility</a></li><li class="chapter-item expanded affix "><li class="part-title">Command Reference</li><li class="chapter-item expanded "><a href="cmd_config.html"><strong aria-hidden="true">7.</strong> Config</a></li><li class="chapter-item expanded "><a href="cmd_edit.html"><strong aria-hidden="true">8.</strong> Edit</a></li><li class="chapter-item expanded "><a href="cmd_export.html"><strong aria-hidden="true">9.</strong> Export</a></li><li class="chapter-item expanded "><a href="cmd_import.html"><strong aria-hidden="true">10.</strong> Import</a></li><li class="chapter-item expanded "><a href="cmd_switch.html"><strong aria-hidden="true">11.</strong> Switch</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -140,7 +140,6 @@
 Wiki address: (https://en.wikipedia.org/w)
 Login: myuser
 Password: mypassword
-
 Next, a configuration file will be created for you and saved as /home/myuser/.wikicmd.json
 
 Is this OK? (yes):    
@@ -150,7 +149,7 @@ Done!
 <h2 id="configuration-structure"><a class="header" href="#configuration-structure">Configuration Structure</a></h2>
 <p>A configuration file is formatted as follows:</p>
 <pre><code class="language-json">{
-  &quot;config&quot;: [
+  &quot;wikis&quot;: [
     {
       &quot;id&quot;: &quot;my_wiki&quot;,
       &quot;address&quot;: &quot;https://en.wikipedia.org/w&quot;,
@@ -160,17 +159,18 @@ Done!
   ]
 }
 </code></pre>
-<p>The <code>config</code> field takes a list of &quot;Wiki Configuration Objects&quot;. In the example above, we have only one Wiki, <code>my_wiki</code>, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the <a href="cmd_switch.html">switch command</a>.</p>
+<p>The <code>wikis</code> field takes a list of &quot;Wiki Configuration Objects&quot;. In the example above, we have only one Wiki, <code>my_wiki</code>, that we want to manage with wikicmd. If you want to configure wikicmd to be able to use multiple wikis, make sure to read about the <a href="cmd_switch.html">switch command</a>.</p>
 <h2 id="configuration-parameters"><a class="header" href="#configuration-parameters">Configuration Parameters</a></h2>
-<h3 id="id"><a class="header" href="#id">id</a></h3>
+<h3 id="wiki-object"><a class="header" href="#wiki-object">Wiki Object</a></h3>
+<h4 id="id"><a class="header" href="#id">id</a></h4>
 <p>An ID to identify a Wiki with.</p>
-<h3 id="address"><a class="header" href="#address">address</a></h3>
+<h4 id="address"><a class="header" href="#address">address</a></h4>
 <p>A Wiki URL. For example <code>https://en.wikipedia.org/w</code>.</p>
-<h3 id="user"><a class="header" href="#user">user</a></h3>
+<h4 id="user"><a class="header" href="#user">user</a></h4>
 <p>A username that you can login with.</p>
-<h3 id="password"><a class="header" href="#password">password</a></h3>
+<h4 id="password"><a class="header" href="#password">password</a></h4>
 <p>Your password.</p>
-<h3 id="importextensions-optional"><a class="header" href="#importextensions-optional">importExtensions (optional)</a></h3>
+<h4 id="importextensions-optional"><a class="header" href="#importextensions-optional">importExtensions (optional)</a></h4>
 <p>A list of file extensions that can be be imported.</p>
 <p>MediaWiki by default allows only a set of file types to be uploaded. However there are extensions that enhance MediaWiki to allow other kinds of files. If you customised your wiki to enable uploading other types of files, you can use this configuration parameter to enable wikicmd to import these files.</p>
 <pre><code>&quot;importExtensions&quot;: [
@@ -179,6 +179,12 @@ Done!
   &quot;wmv&quot;
 ]
 </code></pre>
+<h3 id="root-level-configuration"><a class="header" href="#root-level-configuration">Root Level Configuration</a></h3>
+<p>The following configuration parameters are not related to any specific Wiki instance.</p>
+<h4 id="editor-optional"><a class="header" href="#editor-optional">editor (optional)</a></h4>
+<p>Sets the text-editing program for editing Wiki Pages. Defaults to <code>vim</code> if not set. The <code>EDITOR</code> shell environment variable can also be used to overwrite this option.</p>
+<h4 id="default-optional"><a class="header" href="#default-optional">default (optional)</a></h4>
+<p>The wiki that you're currently working with. This parameter is manipulated by the <a href="cmd_switch.html">switch command.</a></p>
 
                     </main>
 
