@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Installing - wikicmd</title>
+        <title>Compatibility - wikicmd</title>
         <!-- Custom HTML head -->
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="description" content="">
@@ -75,7 +75,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="wikicmd.html"><strong aria-hidden="true">1.</strong> wikicmd</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="install.html" class="active"><strong aria-hidden="true">2.</strong> Installing</a></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuring</a></li><li class="chapter-item expanded "><a href="credentials.html"><strong aria-hidden="true">4.</strong> Get your Wiki Credentials</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">5.</strong> Troubleshooting</a></li><li class="chapter-item expanded "><a href="compatibility.html"><strong aria-hidden="true">6.</strong> Compatibility</a></li><li class="chapter-item expanded affix "><li class="part-title">Command Reference</li><li class="chapter-item expanded "><a href="cmd_config.html"><strong aria-hidden="true">7.</strong> Config</a></li><li class="chapter-item expanded "><a href="cmd_edit.html"><strong aria-hidden="true">8.</strong> Edit</a></li><li class="chapter-item expanded "><a href="cmd_export.html"><strong aria-hidden="true">9.</strong> Export</a></li><li class="chapter-item expanded "><a href="cmd_import.html"><strong aria-hidden="true">10.</strong> Import</a></li><li class="chapter-item expanded "><a href="cmd_switch.html"><strong aria-hidden="true">11.</strong> Switch</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="wikicmd.html"><strong aria-hidden="true">1.</strong> wikicmd</a></li><li class="chapter-item expanded affix "><li class="part-title">User Guide</li><li class="chapter-item expanded "><a href="install.html"><strong aria-hidden="true">2.</strong> Installing</a></li><li class="chapter-item expanded "><a href="config.html"><strong aria-hidden="true">3.</strong> Configuring</a></li><li class="chapter-item expanded "><a href="credentials.html"><strong aria-hidden="true">4.</strong> Get your Wiki Credentials</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">5.</strong> Troubleshooting</a></li><li class="chapter-item expanded "><a href="compatibility.html" class="active"><strong aria-hidden="true">6.</strong> Compatibility</a></li><li class="chapter-item expanded affix "><li class="part-title">Command Reference</li><li class="chapter-item expanded "><a href="cmd_config.html"><strong aria-hidden="true">7.</strong> Config</a></li><li class="chapter-item expanded "><a href="cmd_edit.html"><strong aria-hidden="true">8.</strong> Edit</a></li><li class="chapter-item expanded "><a href="cmd_export.html"><strong aria-hidden="true">9.</strong> Export</a></li><li class="chapter-item expanded "><a href="cmd_import.html"><strong aria-hidden="true">10.</strong> Import</a></li><li class="chapter-item expanded "><a href="cmd_switch.html"><strong aria-hidden="true">11.</strong> Switch</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
         </nav>
@@ -134,45 +134,22 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
-<h2 id="download-it"><a class="header" href="#download-it">Download it</a></h2>
-<p>This is the easiest installation method.</p>
-<pre><code class="language-sh">$ wget https://github.com/dhuan/wikicmd/releases/download/v0.1.0/wikicmd_v0.1.0_linux-386.zip
-$ unzip wikicmd_v0.1.0_linux-386.zip
-</code></pre>
-<blockquote>
-<p>If you're using MacOS, you'll need to replace the download link above with the one for your platform. <a href="https://github.com/dhuan/wikicmd/releases">Check the releases page</a> to see all supported platforms and download the one that matches your system.</p>
-</blockquote>
-<p>A <code>wikicmd</code> binary should then be available to you at your current directory. You can just use it:</p>
-<pre><code class="language-sh">$ ./wikicmd
-</code></pre>
-<p>Optionally, you may move it to your user's programs folder in order to make it executable without specifying the program's path: </p>
-<pre><code class="language-sh">$ mv ./wikicmd ~/bin/.
-$ wikicmd
-</code></pre>
-<h2 id="installing-from-source"><a class="header" href="#installing-from-source">Installing from source</a></h2>
-<p>Make sure that your system meets the following requirements before proceeding:</p>
+                        <h1 id="compatibility"><a class="header" href="#compatibility">Compatibility</a></h1>
+<p>The following is a list of versions of MediaWiki with which wikicmd has been tested and is known to work.</p>
 <ul>
-<li><a href="https://go.dev/">Go 1.18 or more recent</a></li>
-<li><a href="https://www.gnu.org/software/make/">GNU Make</a></li>
-<li><a href="https://git-scm.com/">Git</a></li>
+<li>1.37.2</li>
+<li>1.37.1</li>
+<li>1.37.0</li>
 </ul>
-<pre><code class="language-sh">$ git clone https://github.com/dhuan/wikicmd.git
-$ cd wikicmd
-$ make build
-</code></pre>
-<p>You should then have an executable named <code>wikicmd</code> located in the <code>bin</code> folder of the repository, which you can execute:</p>
-<pre><code class="language-sh">$ ./bin/wikicmd
-</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="wikicmd.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="troubleshooting.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
-                            <a rel="next" href="config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="cmd_config.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         <div style="clear: both"></div>
@@ -181,10 +158,10 @@ $ make build
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="wikicmd.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="troubleshooting.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
-                    <a rel="next" href="config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next" href="cmd_config.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
             </nav>
