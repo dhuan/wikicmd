@@ -185,3 +185,17 @@ func RemoveNth[T interface{}](list []T, iToRemove int) []T {
 
 	return newList
 }
+
+func TrimEmptyLines(text string) string {
+	lines := strings.Split(text, "\n")
+
+	if strings.TrimSpace(lines[0]) == "" {
+		lines = lines[1:]
+	}
+
+	if strings.TrimSpace(lines[len(lines)-1]) == "" {
+		lines = lines[:len(lines)-1]
+	}
+
+	return strings.Join(lines, "\n")
+}

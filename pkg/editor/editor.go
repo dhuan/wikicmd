@@ -3,6 +3,8 @@ package editor
 import (
 	"os"
 	"os/exec"
+
+	"github.com/dhuan/wikicmd/internal/utils"
 )
 
 func Edit(editorProgram, content string) (string, bool, error) {
@@ -59,5 +61,5 @@ func mktemp() (string, error) {
 		return "", err
 	}
 
-	return string(result), nil
+	return utils.TrimEmptyLines(string(result)), nil
 }
