@@ -1,5 +1,9 @@
 # Changelog
 
+## wikicmd 0.2.1
+
+This update contains only a minor bugfix - editor programs, opened when using wikicmd's `edit` command, were receiving filenames with line breaks. Some programs have issues with filenames formatted as such, causing wikicmd to crash. This version fixes that.
+
 ## wikicmd 0.2.0
 
 - Config param renamed from `config` to `wikis`.
