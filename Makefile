@@ -14,4 +14,8 @@ test_unit:
 test_e2e:
 	go test -v ./tests/e2e/*_test.go
 
+prepare_e2e:
+	bash scripts/setup_mock.sh
+	bash scripts/setup_fakevim.sh
+
 test: test_unit test_e2e
