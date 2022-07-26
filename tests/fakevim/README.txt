@@ -13,17 +13,17 @@ fakevim:/path/to/some/file
 fakevim can (programatically) edit files for you, that's where the FAKEVIM_MODE
 Environment Variable comes in.
 
-FAKEVIM_MODE=APPEND
+FAKEVIM_MODE=append
 ===================
 
 Appends FAKEVIM_CONTENT to the edited file.
 
-FAKEVIM_MODE=OVERWRITE
+FAKEVIM_MODE=overwrite
 ======================
 
 Overwrites the edited file with FAKEVIM_CONTENT.
 
-FAKEVIM_MODE=NONE
+FAKEVIM_MODE=none
 =================
 
 This is the default mode. Nothing really happens - the file fakevim is opened

@@ -2,7 +2,7 @@
   "wikis": [
     {
       "id": "my_wiki",
-      "address": "http://localhost:7000",
+      "address": "http://localhost:4000",
       "user": "Admin@bot",
       "password": "7ldic7kn2a44f39d4nf8bcdost4a13qf",
       "importExtensions": []
@@ -14,5 +14,6 @@
       "password": "7ldic7kn2a44f39d4nf8bcdost4a13qf",
       "importExtensions": []
     }
-  ]
+  ],
+  "editor": "tests/bin/fakevim"
 }
