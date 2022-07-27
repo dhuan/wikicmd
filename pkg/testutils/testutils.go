@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/dhuan/mock/pkg/mock"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -181,4 +182,22 @@ func waitForOutputInCommand(expectedOutput string, attempts int, buffer *bytes.B
 	}
 
 	return false
+}
+
+func MockAssert(t *testing.T, assertConfig *mock.AssertConfig) {
+	mockConfig := mock.Init("localhost:4000")
+	validationErrors, err := mock.Assert(mockConfig, assertConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	if len(validationErrors) > 0 {
+		fmt.Printf("Mock assertion failed!\n\n")
+
+		for i, _ := range validationErrors {
+			fmt.Printf("%+v\n\n", validationErrors[i])
+		}
+
+		t.Fail()
+	}
 }
