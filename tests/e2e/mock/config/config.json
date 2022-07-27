@@ -35,7 +35,7 @@
             "key_values": {
               "action": "parse",
               "format": "json",
-              "page": "foobar",
+              "page": "some_page",
               "prop": "wikitext",
               "formatversion": "2"
             }
