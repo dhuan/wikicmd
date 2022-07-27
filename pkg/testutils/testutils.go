@@ -144,7 +144,7 @@ func SetFakeVimToAddContent(content string) map[string]string {
 }
 
 func RunMockBg(state *TestState) KillMockFunc {
-	command := "serve -c /home/dev/github.com/dhuan/wikicmd/tests/e2e/mock/config/config.json -p 4000"
+	command := fmt.Sprintf("serve -c %s/tests/e2e/mock/config/config.json -p 4000", pwd())
 	parseCommandVars(&command)
 	commandParameters := toCommandParameters(command)
 
