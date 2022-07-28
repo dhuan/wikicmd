@@ -31,6 +31,11 @@ jobs:
     - name: Build
       run: make
 
-    - name: Test
+    - name: Unit Tests
       run: |
-          make test
+          make test_unit
+
+    - name: E2E Tests
+      run: |
+          make prepare_e2e
+          make test_e2e

@@ -1,0 +1,74 @@
+{
+  "endpoints": [
+    {
+      "route": "api.php",
+      "method": "get",
+      "response": "",
+      "response_if": [
+        {
+          "response": "file:./response_get_login_token.json",
+          "condition": {
+            "type": "querystring_match",
+            "key_values": {
+              "action": "query",
+              "format": "json",
+              "meta": "tokens",
+              "type": "login"
+            }
+          }
+        },
+        {
+          "response": "file:./response_get_csrf_token.json",
+          "condition": {
+            "type": "querystring_match",
+            "key_values": {
+              "action": "query",
+              "format": "json",
+              "meta": "tokens"
+            }
+          }
+        },
+        {
+          "response": "file:./response_get_page.json",
+          "condition": {
+            "type": "querystring_match",
+            "key_values": {
+              "action": "parse",
+              "format": "json",
+              "page": "some_page",
+              "prop": "wikitext",
+              "formatversion": "2"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "route": "api.php",
+      "method": "post",
+      "response": "default post!",
+      "response_if": [
+        {
+          "response": "file:./response_login.json",
+          "condition": {
+            "type": "form_match",
+            "key_values": {
+              "format": "json",
+              "action": "login",
+              "lgname": "Admin@bot"
+            }
+          }
+        },
+        {
+          "response": "file:./response_edit.json",
+          "condition": {
+            "type": "form_match",
+            "key_values": {
+              "action": "edit"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

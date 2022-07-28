@@ -1,0 +1,10 @@
+{
+  "status": 200,
+  "statustext": "OK",
+  "html": "<pre class=\"api-pretty-content\">{\n    \"edit\": {\n        \"result\": \"Success\",\n        \"pageid\": 462,\n        \"title\": \"Foobar\",\n        \"contentmodel\": \"wikitext\",\n        \"oldrevid\": 465,\n        \"newrevid\": 466,\n        \"newtimestamp\": \"2022-07-04T21:47:14Z\",\n        \"watched\": \"\"\n    }\n}</pre>",
+  "modules": [
+    "mediawiki.apipretty"
+  ],
+  "continue": null,
+  "time": 124
+}
