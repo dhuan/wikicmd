@@ -28,8 +28,7 @@ func TestSwitchingToAnotherWiki(t *testing.T) {
 	assert.Equal(
 		t,
 		commandResult,
-		`Done!
-`,
+		`Done!`,
 	)
 
 	testutils.AssertConfig(t, testState, testutils.Config_field_default, "another_wiki")

@@ -12,7 +12,7 @@ func TestEditPage(t *testing.T) {
 	killMock := testutils.RunMockBg(testState)
 	defer killMock()
 
-	testutils.RunWikiCmd(testState, "edit some_page", testutils.SetFakeVimToAddContent(" This is the new content."))
+	output, _ := testutils.RunWikiCmd(testState, "edit some_page", testutils.SetFakeVimToAddContent(" This is the new content."))
 
 	testutils.MockAssert(
 		t,
@@ -33,4 +33,6 @@ func TestEditPage(t *testing.T) {
 			},
 		},
 	)
+
+	testutils.AssertLine(t, -1, output, "some_page edited successfully.")
 }

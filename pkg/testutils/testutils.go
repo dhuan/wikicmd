@@ -47,7 +47,21 @@ func RunWikiCmd(state *TestState, command string, env map[string]string) (string
 		return string(result), err
 	}
 
-	return string(result), nil
+	return trimEmptyLines(string(result)), nil
+}
+
+func trimEmptyLines(text string) string {
+	lines := strings.Split(text, "\n")
+
+	if strings.TrimSpace(lines[0]) == "" {
+		lines = lines[1:]
+	}
+
+	if strings.TrimSpace(lines[len(lines)-1]) == "" {
+		lines = lines[:len(lines)-1]
+	}
+
+	return strings.Join(lines, "\n")
 }
 
 func StartupTest() *TestState {
@@ -200,4 +214,18 @@ func MockAssert(t *testing.T, assertConfig *mock.AssertConfig) {
 
 		t.Fail()
 	}
+}
+
+func AssertLine(t *testing.T, lineNumber int, fullText, expectedText string) {
+	lines := strings.Split(fullText, "\n")
+
+	if lineNumber < 0 {
+		lineNumber = len(lines) + lineNumber
+	}
+
+	assert.Equal(
+		t,
+		lines[lineNumber],
+		expectedText,
+	)
 }
