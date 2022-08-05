@@ -27,6 +27,7 @@ const (
 )
 
 func RunWikiCmd(state *TestState, command string, env map[string]string) (string, error) {
+	parseCommandVars(&command)
 	commandParameters := toCommandParameters(command)
 
 	cmd := exec.Command(state.WikicmdBinaryPath, commandParameters...)
