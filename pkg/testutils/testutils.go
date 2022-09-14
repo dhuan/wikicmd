@@ -167,12 +167,13 @@ func RunMockBg(state *TestState) KillMockFunc {
 	cmd := exec.Command(state.MockBinaryPath, commandParameters...)
 	buf := &bytes.Buffer{}
 	cmd.Stdout = buf
+	cmd.Stderr = buf
 	err := cmd.Start()
 	if err != nil {
 		panic(err)
 	}
 
-	serverIsReady := waitForOutputInCommand("Mock server is listening on port 4000.", 4, buf)
+	serverIsReady := waitForOutputInCommand("Server started", 4, buf)
 	if !serverIsReady {
 		panic("Something went wrong while waiting for mock to start up.")
 	}
