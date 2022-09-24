@@ -3,6 +3,7 @@ package editor
 import (
 	"os"
 	"os/exec"
+	"reflect"
 
 	"github.com/dhuan/wikicmd/internal/utils"
 )
@@ -17,7 +18,7 @@ func Edit(editorProgram, content string) (string, bool, error) {
 		return "", false, err
 	}
 
-	fileInfoA, err := os.Stat(fileName)
+	fileContentBeforeEdited, err := os.ReadFile(fileName)
 	if err != nil {
 		return "", false, err
 	}
@@ -36,12 +37,7 @@ func Edit(editorProgram, content string) (string, bool, error) {
 		return "", false, err
 	}
 
-	fileInfoB, err := os.Stat(fileName)
-	if err != nil {
-		return "", false, err
-	}
-
-	changed := fileInfoA.ModTime().String() != fileInfoB.ModTime().String()
+	changed := !(reflect.DeepEqual(fileContentBeforeEdited, fileContent))
 
 	return string(fileContent), changed, nil
 }
