@@ -19,11 +19,11 @@ func TestEditPage(t *testing.T) {
 		&mock.AssertConfig{
 			Route: "api.php",
 			Nth:   5,
-			Assert: &mock.AssertOptions{
-				Type:  mock.AssertType_MethodMatch,
+			Assert: &mock.Condition{
+				Type:  mock.ConditionType_MethodMatch,
 				Value: "post",
-				And: &mock.AssertOptions{
-					Type: mock.AssertType_FormMatch,
+				And: &mock.Condition{
+					Type: mock.ConditionType_FormMatch,
 					KeyValues: map[string]interface{}{
 						"action": "edit",
 						"title":  "some_page",
