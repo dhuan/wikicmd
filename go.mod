@@ -3,7 +3,7 @@ module github.com/dhuan/wikicmd
 go 1.18
 
 require (
-	github.com/dhuan/mock v0.8.0
+	github.com/dhuan/mock v1.2.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
 )

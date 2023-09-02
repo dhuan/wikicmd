@@ -25,10 +25,10 @@ Done!`,
 
 	testutils.MockAssert(
 		t,
-		&mock.AssertConfig{
+		&mock.AssertOptions{
 			Route: "api.php",
 			Nth:   4,
-			Assert: &mock.Condition{
+			Condition: &mock.Condition{
 				Type:  mock.ConditionType_MethodMatch,
 				Value: "post",
 				And: &mock.Condition{

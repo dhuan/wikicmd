@@ -200,7 +200,7 @@ func waitForOutputInCommand(expectedOutput string, attempts int, buffer *bytes.B
 	return false
 }
 
-func MockAssert(t *testing.T, assertConfig *mock.AssertConfig) {
+func MockAssert(t *testing.T, assertConfig *mock.AssertOptions) {
 	mockConfig := mock.Init("localhost:4000")
 	validationErrors, err := mock.Assert(mockConfig, assertConfig)
 	if err != nil {
@@ -210,7 +210,7 @@ func MockAssert(t *testing.T, assertConfig *mock.AssertConfig) {
 	if len(validationErrors) > 0 {
 		fmt.Printf("Mock assertion failed!\n\n")
 
-		for i, _ := range validationErrors {
+		for i := range validationErrors {
 			fmt.Printf("%+v\n\n", validationErrors[i])
 		}
 
