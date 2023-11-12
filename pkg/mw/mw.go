@@ -190,17 +190,17 @@ func GetAllImages(config *Config, credentials *ApiCredentials, continuation stri
 func parseStateGetAllPages(stateSerialized map[string]string) (*StateGetAllPages, error) {
 	firstRun, ok := stateSerialized["firstRun"]
 	if !ok {
-		return &StateGetAllPages{}, errors.New(fmt.Sprintf("Field %s missing from serialized state.", "firstRun"))
+		return &StateGetAllPages{}, fmt.Errorf("Field %s missing from serialized state.", "firstRun")
 	}
 
 	namespaces, ok := stateSerialized["namespaces"]
 	if !ok {
-		return &StateGetAllPages{}, errors.New(fmt.Sprintf("Field %s missing from serialized state.", "namespaces"))
+		return &StateGetAllPages{}, fmt.Errorf("Field %s missing from serialized state.", "namespaces")
 	}
 
 	apContinue, ok := stateSerialized["apContinue"]
 	if !ok {
-		return &StateGetAllPages{}, errors.New(fmt.Sprintf("Field %s missing from serialized state.", "apContinue"))
+		return &StateGetAllPages{}, fmt.Errorf("Field %s missing from serialized state.", "apContinue")
 	}
 
 	firstRunParsed := utils.StringToBool(firstRun)
@@ -325,7 +325,7 @@ func GetPage(config *Config, credentials *ApiCredentials, title string, hook *Ho
 	)
 }
 
-func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) (error, []UploadWarning, bool) {
+func Upload(config *Config, credentials *ApiCredentials, fileName string, fileContent io.Reader) ([]UploadWarning, bool, error) {
 	buffer := &bytes.Buffer{}
 	writer := multipart.NewWriter(buffer)
 
@@ -341,23 +341,23 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 		err := writer.WriteField(key, value)
 
 		if err != nil {
-			return err, []UploadWarning{}, false
+			return []UploadWarning{}, false, err
 		}
 	}
 
 	part, err := writer.CreateFormFile("file", fileName)
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	_, err = io.Copy(part, fileContent)
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	err = writer.Close()
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	request, err := http.NewRequest(
@@ -366,7 +366,7 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 		buffer,
 	)
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	request.Header.Set("Content-Type", writer.FormDataContentType())
@@ -375,30 +375,30 @@ func Upload(config *Config, credentials *ApiCredentials, fileName string, fileCo
 	client := &http.Client{}
 	response, err := client.Do(request)
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	decodedJson := &uploadResponse{}
 	err = json.Unmarshal(bodyBytes, &decodedJson)
 	if err != nil {
-		return err, []UploadWarning{}, false
+		return []UploadWarning{}, false, err
 	}
 
 	warning := resolveUploadWarningFromUploadResponse(decodedJson)
 	if warning != UPLOAD_WARNING_NONE {
-		return nil, []UploadWarning{warning}, false
+		return []UploadWarning{warning}, false, nil
 	}
 
 	if decodedJson.Error.Code != "" {
-		return errors.New(fmt.Sprintf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info)), []UploadWarning{}, false
+		return []UploadWarning{}, false, fmt.Errorf("%s: %s", decodedJson.Error.Code, decodedJson.Error.Info)
 	}
 
-	return nil, []UploadWarning{}, true
+	return []UploadWarning{}, true, nil
 }
 
 func resolveUploadWarningFromUploadResponse(response *uploadResponse) UploadWarning {

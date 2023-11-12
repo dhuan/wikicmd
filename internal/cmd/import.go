@@ -36,7 +36,7 @@ var importCmd = &cobra.Command{
 
 		uploadedCount := runImport(userConfig, wikiConfig, apiCredentials, filePaths, hook)
 
-		fmt.Println(fmt.Sprintf("%d item(s) have been imported.\nDone!", uploadedCount))
+		fmt.Printf("%d item(s) have been imported.\nDone!\n", uploadedCount)
 	},
 }
 
@@ -49,7 +49,7 @@ func runImport(
 ) int {
 	uploadedCount := 0
 	for _, filePath := range filePaths {
-		fmt.Println(fmt.Sprintf("Importing %s", filePath))
+		fmt.Printf("Importing %s\n", filePath)
 
 		file, err := os.Open(filePath)
 		if err != nil {
@@ -108,7 +108,7 @@ func importImage(
 ) ([]mw.UploadWarning, bool, error) {
 	fileName := filepath.Base(filePath)
 
-	err, warnings, uploaded := mw.Upload(wikiConfig, apiCredentials, fileName, file)
+	warnings, uploaded, err := mw.Upload(wikiConfig, apiCredentials, fileName, file)
 	if err != nil {
 		return []mw.UploadWarning{}, uploaded, err
 	}
@@ -144,13 +144,13 @@ func handleFileValidationErrors(fileValidationErrors map[string]error) {
 
 	for filePath, fileValidationError := range fileValidationErrors {
 		if errors.Is(fileValidationError, utils.ErrFileDoesNotExist) {
-			fmt.Println(fmt.Sprintf("%s: Does not exist.", filePath))
+			fmt.Printf("%s: Does not exist.\n", filePath)
 
 			continue
 		}
 
 		if errors.Is(fileValidationError, utils.ErrExtensionNotAccepted) {
-			fmt.Println(fmt.Sprintf("%s: Extension not allowed.", filePath))
+			fmt.Printf("%s: Extension not allowed.\n", filePath)
 
 			continue
 		}
@@ -168,7 +168,7 @@ func handleUploadWarnings(warnings []mw.UploadWarning) {
 		message, ok := MAP_UPLOAD_WARNING_MESSAGE[warning]
 
 		if ok {
-			fmt.Println(fmt.Sprintf("WARNING: %s", message))
+			fmt.Printf("WARNING: %s\n", message)
 		}
 	}
 }

@@ -54,9 +54,9 @@ var editCmd = &cobra.Command{
 			}
 
 			if page.Exists {
-				fmt.Println(fmt.Sprintf("\n%s edited successfully.", page.Name))
+				fmt.Printf("\n%s edited successfully.\n", page.Name)
 			} else {
-				fmt.Println(fmt.Sprintf("\n%s created successfully.", page.Name))
+				fmt.Printf("\n%s created successfully.\n", page.Name)
 			}
 
 			return

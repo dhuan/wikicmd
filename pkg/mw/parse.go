@@ -36,7 +36,3 @@ func parseGetPageResponse(pageName string) func(*getPageResponse, *http.Response
 		return &Page{pageName, decodedJson.Parse.Wikitext, exists}, nil
 	}
 }
-
-func parseUploadResponse(decodedJson *uploadResponse, response *http.Response) (*UploadResult, error) {
-	return &UploadResult{true}, nil
-}

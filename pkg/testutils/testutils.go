@@ -35,7 +35,7 @@ func RunWikiCmd(state *TestState, command string, env map[string]string) (string
 	cmd.Env = append(cmd.Env, fmt.Sprintf("WIKICMD_CONFIG=%s", state.WikicmdConfigPath))
 	cmd.Env = append(cmd.Env, fmt.Sprintf("EDITOR=%s/tests/bin/fakevim", pwd()))
 
-	for key, _ := range env {
+	for key := range env {
 		cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", key, env[key]))
 	}
 

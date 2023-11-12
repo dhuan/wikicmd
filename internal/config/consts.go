@@ -11,5 +11,3 @@ var pageExtensions = []string{
 	"wikitext",
 	"txt",
 }
-
-var allowedExtensionsToBeImported = append(imageExtensions, pageExtensions...)

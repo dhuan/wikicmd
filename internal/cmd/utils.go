@@ -11,7 +11,7 @@ import (
 
 func handleErrorGettingApiCredentials(err error, user string, wikiAddress string) {
 	if errors.Is(err, mw.ErrLogin) {
-		fmt.Println(fmt.Sprintf("Failed to login with user %s in %s.", user, wikiAddress))
+		fmt.Printf("Failed to login with user %s in %s.\n", user, wikiAddress)
 
 		return
 	}

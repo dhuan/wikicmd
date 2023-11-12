@@ -153,11 +153,7 @@ func AnyEquals[T comparable](list []T, value T) bool {
 }
 
 func StringToBool(str string) bool {
-	if strings.ToLower(str) == "true" {
-		return true
-	}
-
-	return false
+	return strings.ToLower(str) == "true"
 }
 
 func BoolToString(value bool) string {

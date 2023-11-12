@@ -34,7 +34,7 @@ var configCmd = &cobra.Command{
 			}
 		}
 
-		userSettings := config.DefaultUserSettings
+		var userSettings *config.UserSettings
 		configRoot := &config.ConfigRoot{}
 		if configFileExists {
 			configRoot, err = config.GetConfigFromPath(configFilePath)
@@ -53,7 +53,7 @@ var configCmd = &cobra.Command{
 		if configFileExists {
 			fmt.Println("Done!")
 		} else {
-			fmt.Println(fmt.Sprintf("Done!\n\nRun \"wikicmd config\" again whenever you want to edit that configuration file."))
+			fmt.Printf("Done!\n\nRun \"wikicmd config\" again whenever you want to edit that configuration file.\n")
 		}
 	},
 }
@@ -70,7 +70,7 @@ func newConfigWizard(filePath string, requestingNew bool) (bool, error) {
 	inputLogin := input.TextPrompt("Login: ", "")
 	inputPassword := input.TextPrompt("Password: ", "")
 
-	fmt.Println(fmt.Sprintf("\nNext, a configuration file will be created for you and saved as %s\n", filePath))
+	fmt.Printf("\nNext, a configuration file will be created for you and saved as %s\n\n", filePath)
 
 	inputConfirm, _ := input.ResponsePrompt[bool](
 		"Is this OK? (yes): ",
@@ -85,7 +85,7 @@ func newConfigWizard(filePath string, requestingNew bool) (bool, error) {
 
 	newConfig := config.ConfigRoot{
 		Wikis: []config.WikiConfig{
-			config.WikiConfig{
+			{
 				Id:               "my_wiki",
 				Address:          inputWikiAddress,
 				User:             inputLogin,

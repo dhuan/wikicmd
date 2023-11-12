@@ -17,7 +17,7 @@ var exportCmd = &cobra.Command{
 		var err error
 		exportTypeValid := validateExportTypeFlag(flagExportType)
 		if !exportTypeValid {
-			fmt.Println(fmt.Sprintf("Type '%s' is not valid.\n\nThe valid types are: all,page,image.", flagExportType))
+			fmt.Printf("Type '%s' is not valid.\n\nThe valid types are: all,page,image.\n", flagExportType)
 
 			os.Exit(1)
 		}
@@ -41,7 +41,7 @@ var exportCmd = &cobra.Command{
 			}
 		}
 
-		fmt.Println(fmt.Sprintf("%d page(s) and %d and image(s) have been exported.\nDone!", exportCount, exportImagesCount))
+		fmt.Printf("%d page(s) and %d and image(s) have been exported.\nDone!\n", exportCount, exportImagesCount)
 	},
 }
 
@@ -61,7 +61,7 @@ func runExportImages(
 
 	for _, image := range images {
 		saveAs := fmt.Sprintf("%s/%s", exportTo, image.Name)
-		fmt.Println(fmt.Sprintf("Writing %s", saveAs))
+		fmt.Printf("Writing %s\n", saveAs)
 		if err := os.WriteFile(
 			saveAs,
 			image.Content,
@@ -75,7 +75,6 @@ func runExportImages(
 		return exportCount, nil
 	}
 
-	images = make([]mw.Image, 0, 0)
 	fmt.Println("Fetching next batch.")
 	return runExportImages(config, apiCredentials, exportTo, nextContinuation, exportCount, hook)
 }
@@ -96,7 +95,7 @@ func runExport(
 
 	for _, page := range pages {
 		fileName := fmt.Sprintf("%s/%s.wikitext", exportTo, page.Name)
-		fmt.Println(fmt.Sprintf("Writing %s", fileName))
+		fmt.Printf("Writing %s\n", fileName)
 		if err := os.WriteFile(
 			fileName,
 			[]byte(page.Content),
@@ -110,7 +109,6 @@ func runExport(
 		return exportCount, nil
 	}
 
-	pages = make([]mw.Page, 0, 0)
 	fmt.Println("Fetching next batch.")
 	return runExport(config, apiCredentials, newState, exportTo, exportCount, hook)
 }

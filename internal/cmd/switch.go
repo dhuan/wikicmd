@@ -36,7 +36,7 @@ var switchCmd = &cobra.Command{
 		availableWikisFormatted := strings.Join(availableWikis, ",")
 
 		if !wikiExists {
-			fmt.Println(fmt.Sprintf("No wiki exists with the given ID: %s\n\nThe available Wikis you can switch to are: %s", wikiId, availableWikisFormatted))
+			fmt.Printf("No wiki exists with the given ID: %s\n\nThe available Wikis you can switch to are: %s\n", wikiId, availableWikisFormatted)
 
 			os.Exit(1)
 		}
