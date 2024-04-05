@@ -3,9 +3,9 @@ module github.com/dhuan/wikicmd
 go 1.18
 
 require (
-	github.com/dhuan/mock v1.3.1
+	github.com/dhuan/mock v1.4.0
 	github.com/spf13/cobra v1.8.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 )
 
 require (

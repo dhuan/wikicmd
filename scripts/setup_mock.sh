@@ -1,6 +1,6 @@
 set -xe
 
-MOCK_VERSION="1.3.1"
+MOCK_VERSION="1.4.0"
 MOCK_DOWNLOAD_URL="https://github.com/dhuan/mock/releases/download/v""$MOCK_VERSION""/mock_v""$MOCK_VERSION""_linux-386.tar.gz"
 
 TMP_PATH=$(mktemp -d)
