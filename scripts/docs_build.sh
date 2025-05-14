@@ -1,6 +1,6 @@
 set -ex
 
-URL_MDBOOK="https://github.com/rust-lang/mdBook/releases/download/v0.4.44/mdbook-v0.4.44-x86_64-unknown-linux-gnu.tar.gz"
+URL_MDBOOK="https://github.com/rust-lang/mdBook/releases/download/v0.4.49/mdbook-v0.4.49-x86_64-unknown-linux-gnu.tar.gz"
 LATEST_VERSION=$(git describe --tags --abbrev=0 origin/master)
 
 if [[ -z "$WIKICMD_DOCS_BUILD_SAVE_AS" ]]
